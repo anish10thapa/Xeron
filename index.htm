@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xeron Headquarter</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060608;--bg2:#0d0d12;--bg3:#13131a;--bg4:#1a1a24;
+  --border:#ffffff0f;--border2:#ffffff18;
+  --text:#f0f0f5;--text2:#9898b0;--text3:#5a5a72;
+  --accent:#7c6bff;--accent2:#5549e0;--glow:#7c6bff33;
+  --green:#22d383;--gbg:#22d38314;
+  --red:#ff4d6d;--rbg:#ff4d6d14;
+  --yellow:#ffbe0b;--ybg:#ffbe0b14;
+  --orange:#ff6b35;--blue:#4facfe;
+  --r:12px;--r2:8px;
+  --shadow:0 8px 32px #00000066;
+  --tr:all .2s cubic-bezier(.4,0,.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:15px}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+
+/* ── LOGIN ── */
+#login-screen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.login-glow{position:absolute;width:500px;height:500px;background:radial-gradient(circle,#7c6bff1a 0%,transparent 70%);top:-100px;left:50%;transform:translateX(-50%);border-radius:50%;pointer-events:none}
+.login-card{position:relative;z-index:1;background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:44px 36px;width:400px;max-width:95vw;box-shadow:var(--shadow),0 0 60px #7c6bff0d;animation:slideUp .4s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.login-logo{text-align:center;margin-bottom:32px}
+.lmark{width:52px;height:52px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:#fff;margin-bottom:14px;box-shadow:0 8px 24px var(--glow)}
+.login-logo h1{font-family:'Syne',sans-serif;font-weight:700;font-size:22px;letter-spacing:-.5px}
+.login-logo p{color:var(--text2);font-size:12px;margin-top:4px}
+
+/* ── FORMS ── */
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:7px;letter-spacing:.6px;text-transform:uppercase}
+.fc{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:11px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:var(--tr)}
+.fc:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow)}
+.fc::placeholder{color:var(--text3)}
+select.fc option{background:var(--bg3)}
+textarea.fc{resize:vertical;min-height:80px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.err{background:var(--rbg);border:1px solid #ff4d6d22;border-radius:var(--r2);padding:10px 13px;font-size:12px;color:var(--red);margin-top:10px;display:none}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 18px;border-radius:var(--r2);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;transition:var(--tr);text-decoration:none;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 4px 14px var(--glow)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px var(--glow)}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border2)}
+.btn-secondary:hover{background:var(--bg4)}
+.btn-danger{background:var(--rbg);color:var(--red);border:1px solid #ff4d6d22}
+.btn-danger:hover{background:var(--red);color:#fff}
+.btn-success{background:var(--gbg);color:var(--green);border:1px solid #22d38322}
+.btn-success:hover{background:var(--green);color:#000}
+.btn-warn{background:var(--ybg);color:var(--yellow);border:1px solid #ffbe0b22}
+.btn-sm{padding:6px 13px;font-size:12px;border-radius:6px}
+.btn-xs{padding:4px 9px;font-size:11px;border-radius:5px}
+.btn-icon{padding:7px;width:32px;height:32px;border-radius:7px}
+.btn-full{width:100%}
+
+/* ── APP LAYOUT ── */
+#app{display:none;min-height:100vh}
+#app.active{display:flex}
+#sidebar{width:236px;min-width:236px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:sticky;top:0;overflow-y:auto;transition:var(--tr)}
+.sb-head{padding:20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
+.sb-logo{width:34px;height:34px;min-width:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#fff}
+.sb-brand{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;letter-spacing:-.3px}
+.sb-brand small{display:block;font-family:'DM Sans',sans-serif;font-weight:400;font-size:10px;color:var(--text3)}
+.sb-nav{flex:1;padding:10px 0}
+.nav-sec{padding:0 10px;margin-bottom:2px}
+.nav-sec-label{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:7px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:13px;font-weight:400;transition:var(--tr);margin-bottom:1px}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:var(--glow);color:var(--accent);font-weight:500}
+.nav-icon{width:16px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:20px;min-width:16px;text-align:center}
+.sb-foot{padding:14px 10px;border-top:1px solid var(--border)}
+.user-card{display:flex;align-items:center;gap:9px;padding:9px;border-radius:9px;background:var(--bg3);cursor:pointer;transition:var(--tr)}
+.user-card:hover{background:var(--bg4)}
+.uavatar{width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--green));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0}
+.uinfo{flex:1;min-width:0}
+.uname{font-size:12px;font-weight:500;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.urole{font-size:10px;color:var(--text3)}
+.logout-btn{width:26px;height:26px;display:flex;align-items:center;justify-content:center;color:var(--text3);cursor:pointer;border-radius:6px;transition:var(--tr);font-size:12px}
+.logout-btn:hover{color:var(--red);background:var(--rbg)}
+
+/* ── TOPBAR ── */
+#main{flex:1;overflow-y:auto;background:var(--bg)}
+#topbar{position:sticky;top:0;z-index:100;background:rgba(6,6,8,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between}
+.tb-left{display:flex;align-items:center;gap:10px}
+.tb-right{display:flex;align-items:center;gap:6px}
+.tb-btn{width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);transition:var(--tr);position:relative;background:none;border:none;font-size:15px}
+.tb-btn:hover{background:var(--bg3);color:var(--text)}
+.ndot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--red);border:2px solid var(--bg)}
+.breadcrumb{font-size:12px;color:var(--text2)}
+.breadcrumb span{color:var(--text);font-weight:500}
+#menu-toggle{display:none}
+
+/* ── PAGES ── */
+.page{display:none;padding:24px;animation:fadeIn .25s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:14px;flex-wrap:wrap}
+.ph-title h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;letter-spacing:-.4px}
+.ph-title p{color:var(--text2);font-size:12px;margin-top:3px}
+.ph-actions{display:flex;gap:7px;flex-wrap:wrap}
+
+/* ── CARDS ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px}
+.card-title{font-family:'Syne',sans-serif;font-weight:600;font-size:13px;margin-bottom:14px}
+.card-sm{padding:14px}
+.mb16{margin-bottom:16px}
+.mb24{margin-bottom:24px}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:20px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--green))}
+.stat-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:12px}
+.stat-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;letter-spacing:-1px;line-height:1}
+.stat-lbl{font-size:11px;color:var(--text2);margin-top:4px}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+
+/* ── TABLE ── */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:9px 13px;font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)}
+td{padding:11px 13px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg3)}
+.tda{display:flex;gap:5px;flex-wrap:wrap}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap}
+.b-pending{background:var(--ybg);color:var(--yellow)}
+.b-submitted{background:#4facfe14;color:var(--blue)}
+.b-review{background:#ff6b3514;color:var(--orange)}
+.b-approved{background:var(--gbg);color:var(--green)}
+.b-rejected{background:var(--rbg);color:var(--red)}
+.b-low{background:var(--gbg);color:var(--green)}
+.b-medium{background:var(--ybg);color:var(--yellow)}
+.b-high{background:#ff6b3514;color:var(--orange)}
+.b-urgent{background:var(--rbg);color:var(--red)}
+.b-admin{background:var(--glow);color:var(--accent)}
+.b-member{background:var(--gbg);color:var(--green)}
+.b-client{background:#4facfe14;color:var(--blue)}
+
+/* ── MODALS ── */
+.overlay{position:fixed;inset:0;z-index:1000;background:#000000cc;backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:16px}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;animation:mIn .22s ease;box-shadow:var(--shadow)}
+.modal-lg{max-width:720px}
+.modal-xl{max-width:900px}
+@keyframes mIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
+.mh h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700}
+.mclose{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);transition:var(--tr);background:none;border:none;font-size:14px}
+.mclose:hover{background:var(--bg3);color:var(--text)}
+.mb_{padding:22px}
+.mf{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:flex-end}
+.divider{height:1px;background:var(--border);margin:14px 0}
+
+/* ── NOTIFICATION PANEL ── */
+#npanel{position:fixed;top:0;right:-360px;height:100vh;width:340px;background:var(--bg2);border-left:1px solid var(--border);z-index:500;transition:right .3s ease;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+#npanel.open{right:0}
+.np-head{padding:18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.np-head h3{font-family:'Syne',sans-serif;font-weight:600;font-size:14px}
+.np-list{flex:1;overflow-y:auto;padding:10px}
+.np-item{padding:11px;border-radius:var(--r2);border:1px solid var(--border);margin-bottom:7px;cursor:pointer;transition:var(--tr)}
+.np-item:hover{background:var(--bg3)}
+.np-item.unread{border-color:var(--accent);background:var(--glow)}
+.np-title{font-size:12px;font-weight:500}
+.np-body{font-size:11px;color:var(--text2);margin-top:2px}
+.np-time{font-size:10px;color:var(--text3);margin-top:5px}
+
+/* ── CHAT ── */
+.chat-wrap{display:grid;grid-template-columns:240px 1fr;height:calc(100vh - 132px);background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.chat-sb{border-right:1px solid var(--border);display:flex;flex-direction:column}
+.chat-sb-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.chat-sb-title{font-family:'Syne',sans-serif;font-weight:600;font-size:13px}
+.rt-pill{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);padding:3px 8px;background:var(--bg3);border-radius:20px}
+.rt-dot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0}
+.rt-dot.live{background:var(--green);animation:rtPulse 2s infinite}
+@keyframes rtPulse{0%,100%{opacity:1}50%{opacity:.3}}
+.chat-list{flex:1;overflow-y:auto}
+.chat-item{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:var(--tr)}
+.chat-item:hover{background:var(--bg3)}
+.chat-item.active{background:var(--glow)}
+.ci-av{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--green));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0}
+.ci-name{font-size:12px;font-weight:500}
+.ci-role{font-size:10px;color:var(--text3)}
+.chat-main{display:flex;flex-direction:column;min-height:0}
+.chat-head{padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.msg-row{display:flex;gap:8px;align-items:flex-end}
+.msg-row.own{flex-direction:row-reverse}
+.msg-av{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--accent2),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;color:#fff;flex-shrink:0}
+.msg-bub{max-width:68%;padding:9px 13px;border-radius:12px;font-size:12px;line-height:1.55;background:var(--bg3);color:var(--text);word-break:break-word}
+.msg-row.own .msg-bub{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.msg-time{font-size:9px;color:var(--text3);margin-top:3px}
+.msg-row.own .msg-time{text-align:right}
+.chat-inp-wrap{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:flex-end;flex-shrink:0}
+.chat-inp{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:9px 13px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;resize:none;outline:none;max-height:100px;transition:var(--tr)}
+.chat-inp:focus{border-color:var(--accent)}
+
+/* ── FILE UPLOAD ── */
+.dropzone{border:2px dashed var(--border2);border-radius:var(--r2);padding:24px;text-align:center;cursor:pointer;transition:var(--tr)}
+.dropzone:hover,.dropzone.drag{border-color:var(--accent);background:var(--glow)}
+.dropzone-icon{font-size:28px;margin-bottom:8px}
+.dropzone p{font-size:12px;color:var(--text2)}
+.dropzone small{font-size:10px;color:var(--text3)}
+.file-list{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+.file-row{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:8px}
+.ficon{font-size:18px;flex-shrink:0}
+.finfo{flex:1;min-width:0}
+.fname{font-size:11px;font-weight:500;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.fsize{font-size:10px;color:var(--text3);margin-top:1px}
+.frem{width:20px;height:20px;border-radius:50%;background:var(--rbg);color:var(--red);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;transition:var(--tr)}
+.frem:hover{background:var(--red);color:#fff}
+.uprog-wrap{margin-top:10px}
+.uprog-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text2);margin-bottom:4px}
+.uprog-bar{height:3px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.uprog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:2px;transition:width .3s ease}
+
+/* ── FILE PREVIEW in submission list ── */
+.sub-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+.sub-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sub-user{display:flex;align-items:center;gap:8px}
+.sub-av{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--accent),var(--green));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0}
+.sub-notes{font-size:12px;background:var(--bg4);border-radius:6px;padding:8px 10px;margin-bottom:10px}
+.file-chips{display:flex;flex-wrap:wrap;gap:7px}
+.file-chip{display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--bg4);border:1px solid var(--border);border-radius:6px;font-size:11px}
+.file-chip-name{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-chip a{color:var(--green);text-decoration:none;font-size:11px;padding:2px 5px;border-radius:4px;background:var(--gbg);transition:var(--tr)}
+.file-chip a:hover{background:var(--green);color:#000}
+.file-chip button{background:none;border:none;cursor:pointer;color:var(--accent);font-size:11px;padding:2px 5px;border-radius:4px;background:var(--glow);transition:var(--tr)}
+.file-chip button:hover{background:var(--accent);color:#fff}
+
+/* ── CALENDAR ── */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-dnames{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:6px}
+.cal-dn{text-align:center;font-size:10px;font-weight:600;color:var(--text3);padding:6px 0;text-transform:uppercase}
+.cal-day{min-height:68px;border-radius:7px;display:flex;flex-direction:column;padding:5px;cursor:pointer;transition:var(--tr);background:var(--bg3);border:1px solid var(--border)}
+.cal-day:hover{border-color:var(--accent)}
+.cal-day.today{border-color:var(--accent);background:var(--glow)}
+.cal-day.other .cal-num{opacity:.25}
+.cal-num{font-size:12px;font-weight:500}
+.cal-evts{display:flex;flex-direction:column;gap:2px;margin-top:3px}
+.cal-chip{font-size:9px;padding:1px 4px;border-radius:3px;background:var(--glow);color:var(--accent);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── LEADERBOARD ── */
+.lb-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--r2);background:var(--bg3);margin-bottom:7px;border:1px solid var(--border)}
+.rnk{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:12px;flex-shrink:0}
+.r1{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#000}
+.r2{background:linear-gradient(135deg,#c0c0c0,#808080);color:#000}
+.r3{background:linear-gradient(135deg,#cd7f32,#8b4513);color:#fff}
+.rn{background:var(--bg4);color:var(--text2)}
+.lb-bar-wrap{flex:1}
+.lb-bar{height:3px;background:var(--bg4);border-radius:2px;margin-top:5px}
+.lb-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--green))}
+.lb-pts{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--accent)}
+
+/* ── AUDIT ── */
+.audit-row{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+.audit-ico{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:var(--bg3)}
+.audit-txt{}
+.audit-act{font-size:12px;font-weight:500}
+.audit-meta{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* ── MISC ── */
+.empty{text-align:center;padding:40px 16px;color:var(--text2)}
+.empty-ico{font-size:32px;margin-bottom:10px}
+.empty p{font-size:12px}
+.tabs{display:flex;gap:3px;margin-bottom:18px;background:var(--bg2);padding:4px;border-radius:10px;width:fit-content}
+.tab{padding:7px 14px;border-radius:7px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;background:none;color:var(--text2);transition:var(--tr)}
+.tab.active{background:var(--bg3);color:var(--text)}
+.progress{height:5px;background:var(--bg4);border-radius:3px}
+.progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .5s ease}
+.toast-wrap{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--bg2);border:1px solid var(--border2);border-radius:9px;padding:12px 16px;min-width:260px;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;animation:toastIn .25s ease;font-size:12px}
+@keyframes toastIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+.preview-media{text-align:center}
+.preview-media img{max-width:100%;max-height:440px;border-radius:8px}
+.preview-media video,.preview-media audio{width:100%;border-radius:8px}
+.preview-media iframe{width:100%;height:460px;border:none;border-radius:8px}
+.sb-overlay{position:fixed;inset:0;background:#000000aa;z-index:200;display:none}
+.sb-overlay.open{display:block}
+@media(max-width:768px){
+  #sidebar{position:fixed;left:-250px;z-index:300;height:100vh}
+  #sidebar.open{left:0}
+  #menu-toggle{display:flex}
+  .page{padding:14px}
+  #topbar{padding:0 14px}
+  .form-row{grid-template-columns:1fr}
+  .g2,.g3{grid-template-columns:1fr}
+  .chat-wrap{grid-template-columns:1fr}
+  .chat-sb{display:none}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){.stats-grid{grid-template-columns:1fr}}
+.fw600{font-weight:600}
+.text-accent{color:var(--accent)}
+.text-green{color:var(--green)}
+.text-red{color:var(--red)}
+.text-muted{color:var(--text2)}
+.text-xs{font-size:11px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- ══════ LOGIN ══════ -->
+<div id="login-screen">
+  <div class="login-glow"></div>
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="lmark">XH</div>
+      <h1>Xeron Headquarter</h1>
+      <p>Enterprise Digital Agency System</p>
+    </div>
+    <div class="fg"><label>User ID</label><input class="fc" id="l-id" placeholder="e.g. Anish@Dipa" autocomplete="off"></div>
+    <div class="fg"><label>Password</label><input type="password" class="fc" id="l-pw" placeholder="••••••••"></div>
+    <div class="fg" style="margin-bottom:0">
+      <label>Login As</label>
+      <select class="fc" id="l-role">
+        <option value="admin">Admin</option>
+        <option value="member">Member</option>
+        <option value="client">Client</option>
+      </select>
+    </div>
+    <button class="btn btn-primary btn-full" style="margin-top:18px" onclick="doLogin()">Sign In →</button>
+    <div class="err" id="l-err">Invalid credentials.</div>
+  </div>
+</div>
+
+<!-- ══════ APP ══════ -->
+<div id="app">
+  <div class="sb-overlay" id="sb-overlay" onclick="closeSB()"></div>
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div class="sb-head">
+      <div class="sb-logo">XH</div>
+      <div><div class="sb-brand">Xeron HQ<small>Agency System</small></div></div>
+    </div>
+    <nav class="sb-nav" id="sb-nav"></nav>
+    <div class="sb-foot">
+      <div class="user-card" onclick="go('settings')">
+        <div class="uavatar" id="sb-av">A</div>
+        <div class="uinfo"><div class="uname" id="sb-uname">User</div><div class="urole" id="sb-urole">Role</div></div>
+        <div class="logout-btn" onclick="event.stopPropagation();logout()" title="Logout">✕</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="topbar">
+      <div class="tb-left">
+        <button class="tb-btn" id="menu-toggle" onclick="toggleSB()">☰</button>
+        <div class="breadcrumb">Xeron HQ / <span id="bc">Dashboard</span></div>
+      </div>
+      <div class="tb-right">
+        <button class="tb-btn" onclick="toggleNP()" title="Notifications">🔔<span class="ndot hidden" id="ndot"></span></button>
+        <button class="tb-btn" onclick="go('messages')" title="Messages">💬</button>
+      </div>
+    </div>
+
+    <!-- ── DASHBOARD ── -->
+    <div class="page active" id="page-dashboard">
+      <div class="ph"><div class="ph-title"><h2>Dashboard</h2><p>Agency overview at a glance.</p></div><div class="ph-actions"><button class="btn btn-secondary btn-sm" onclick="loadDashboard()">⟳ Refresh</button></div></div>
+      <div class="stats-grid" id="d-stats"></div>
+      <div class="g2 mb16">
+        <div class="card"><div class="card-title">Revenue vs Expenses</div><canvas id="c-revexp"></canvas></div>
+        <div class="card"><div class="card-title">Task Status</div><canvas id="c-taskdist"></canvas></div>
+      </div>
+      <div class="g2">
+        <div class="card"><div class="card-title">🏆 Leaderboard</div><div id="d-lb"></div></div>
+        <div class="card"><div class="card-title">Recent Activity</div><div id="d-activity"></div></div>
+      </div>
+    </div>
+
+    <!-- ── TASKS ── -->
+    <div class="page" id="page-tasks">
+      <div class="ph">
+        <div class="ph-title"><h2>Tasks</h2><p>Manage and track all tasks.</p></div>
+        <div class="ph-actions">
+          <select class="fc" style="width:130px;padding:7px 11px;font-size:12px" id="tf-status" onchange="loadTasks()">
+            <option value="">All Status</option>
+            <option>Pending</option><option>Submitted</option><option>Under Review</option><option>Approved</option><option>Rejected</option>
+          </select>
+          <button class="btn btn-primary btn-sm hidden" id="btn-new-task" onclick="openTaskModal()">+ New Task</button>
+        </div>
+      </div>
+      <div class="card"><div class="tw"><table>
+        <thead><tr><th>Task</th><th>Assignee</th><th>Category</th><th>Priority</th><th>Deadline</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="tasks-tb"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- ── SUBMIT WORK (member dedicated page) ── -->
+    <div class="page" id="page-submit-work">
+      <div class="ph">
+        <div class="ph-title"><h2>Submit Work</h2><p>Upload your proof files and submit completed tasks.</p></div>
+      </div>
+      <!-- pending tasks list for quick submit -->
+      <div class="card mb16">
+        <div class="card-title">📋 My Assigned Tasks</div>
+        <div class="tw"><table>
+          <thead><tr><th>Task</th><th>Category</th><th>Points</th><th>Deadline</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="sw-tasks-tb"></tbody>
+        </table></div>
+      </div>
+      <!-- my previous submissions -->
+      <div class="card">
+        <div class="card-title">📂 My Submissions</div>
+        <div id="my-subs-list"></div>
+      </div>
+    </div>
+
+    <!-- ── SUBMISSIONS (admin view) ── -->
+    <div class="page" id="page-submissions">
+      <div class="ph">
+        <div class="ph-title"><h2>Submissions</h2><p>Review member work submissions and proof files.</p></div>
+        <div class="ph-actions">
+          <select class="fc" style="width:150px;padding:7px 11px;font-size:12px" id="sub-filter" onchange="loadSubmissionsPage()">
+            <option value="">All Status</option>
+            <option>Pending</option><option>Submitted</option><option>Under Review</option><option>Approved</option><option>Rejected</option>
+          </select>
+        </div>
+      </div>
+      <div id="submissions-list"></div>
+    </div>
+
+    <!-- ── PERFORMANCE ── -->
+    <div class="page" id="page-performance">
+      <div class="ph"><div class="ph-title"><h2>Performance</h2><p>Team metrics and rankings.</p></div></div>
+      <div class="tabs">
+        <button class="tab active" onclick="perfTab('lb',this)">Leaderboard</button>
+        <button class="tab" onclick="perfTab('compare',this)">Comparison</button>
+        <button class="tab" onclick="perfTab('analytics',this)">Analytics</button>
+      </div>
+      <div id="pt-lb">
+        <div class="stats-grid" id="perf-stats"></div>
+        <div id="lb-list"></div>
+      </div>
+      <div id="pt-compare" class="hidden"><div class="card"><canvas id="c-compare"></canvas></div></div>
+      <div id="pt-analytics" class="hidden">
+        <div class="g2">
+          <div class="card"><div class="card-title">Points by Category</div><canvas id="c-catpts"></canvas></div>
+          <div class="card"><div class="card-title">Approval Rates</div><canvas id="c-approval"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PROFIT ── -->
+    <div class="page" id="page-profit">
+      <div class="ph"><div class="ph-title"><h2>Profit & Distribution</h2><p>Financial overview and member earnings.</p></div></div>
+      <div class="stats-grid" id="profit-stats"></div>
+      <div class="g2 mb16">
+        <div class="card" style="text-align:center;padding:28px">
+          <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--green);letter-spacing:-2px" id="profit-total">$0</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:5px">Net Profit This Month</div>
+        </div>
+        <div class="card"><div class="card-title">Distribution</div><canvas id="c-profitdist"></canvas></div>
+      </div>
+      <div class="card"><div class="card-title">Member Earnings Estimate</div><div id="earnings-list"></div></div>
+    </div>
+
+    <!-- ── REVENUE ── -->
+    <div class="page" id="page-revenue">
+      <div class="ph">
+        <div class="ph-title"><h2>Revenue</h2><p>Incoming revenue records.</p></div>
+        <div class="ph-actions"><button class="btn btn-primary btn-sm hidden" id="btn-add-rev" onclick="openRevModal()">+ Add Revenue</button></div>
+      </div>
+      <div class="stats-grid" id="rev-stats"></div>
+      <div class="card mb16"><canvas id="c-revtrend"></canvas></div>
+      <div class="card"><div class="tw"><table>
+        <thead><tr><th>Client</th><th>Project</th><th>Amount</th><th>Date</th><th>Notes</th><th id="rev-act-th"></th></tr></thead>
+        <tbody id="rev-tb"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- ── EXPENSES ── -->
+    <div class="page" id="page-expenses">
+      <div class="ph">
+        <div class="ph-title"><h2>Expenses</h2><p>Outgoing expense records.</p></div>
+        <div class="ph-actions"><button class="btn btn-primary btn-sm hidden" id="btn-add-exp" onclick="openExpModal()">+ Add Expense</button></div>
+      </div>
+      <div class="stats-grid" id="exp-stats"></div>
+      <div class="g2 mb16">
+        <div class="card"><canvas id="c-exppie"></canvas></div>
+        <div class="card"><canvas id="c-exptrend"></canvas></div>
+      </div>
+      <div class="card"><div class="tw"><table>
+        <thead><tr><th>Category</th><th>Amount</th><th>Description</th><th>Date</th><th id="exp-act-th"></th></tr></thead>
+        <tbody id="exp-tb"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- ── RECORDS ── -->
+    <div class="page" id="page-records">
+      <div class="ph">
+        <div class="ph-title"><h2>Shared Records</h2><p>Collaborative team spreadsheet.</p></div>
+        <div class="ph-actions">
+          <button class="btn btn-primary btn-sm" onclick="addRecordRow()">+ Row</button>
+          <button class="btn btn-secondary btn-sm" onclick="addRecordCol()">+ Column</button>
+        </div>
+      </div>
+      <div class="card"><div id="records-wrap"></div></div>
+    </div>
+
+    <!-- ── MESSAGES ── -->
+    <div class="page" id="page-messages">
+      <div class="ph"><div class="ph-title"><h2>Messages</h2><p>Real-time team chat.</p></div></div>
+      <div class="chat-wrap">
+        <div class="chat-sb">
+          <div class="chat-sb-head">
+            <div class="chat-sb-title">Conversations</div>
+            <div class="rt-pill" id="rt-pill"><div class="rt-dot" id="rt-dot"></div><span id="rt-txt">offline</span></div>
+          </div>
+          <div class="chat-list" id="chat-list"></div>
+        </div>
+        <div class="chat-main">
+          <div class="chat-head" id="chat-head"><div style="color:var(--text3);font-size:12px">← Select a conversation</div></div>
+          <div class="chat-msgs" id="chat-msgs"><div class="empty"><div class="empty-ico">💬</div><p>Select a conversation to start messaging.</p></div></div>
+          <div class="chat-inp-wrap hidden" id="chat-inp-wrap">
+            <textarea class="chat-inp" id="chat-inp" rows="1" placeholder="Type a message… (Enter to send)" onkeydown="chatKey(event)"></textarea>
+            <button class="btn btn-primary btn-sm" onclick="sendMsg()">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CALENDAR ── -->
+    <div class="page" id="page-calendar">
+      <div class="ph">
+        <div class="ph-title"><h2>Calendar</h2><p>Deadlines, meetings, milestones.</p></div>
+        <div class="ph-actions">
+          <button class="btn btn-secondary btn-sm" onclick="calPrev()">← Prev</button>
+          <span id="cal-label" style="font-family:'Syne',sans-serif;font-weight:600;padding:0 10px"></span>
+          <button class="btn btn-secondary btn-sm" onclick="calNext()">Next →</button>
+          <button class="btn btn-primary btn-sm hidden" id="btn-add-event" onclick="openEventModal()">+ Event</button>
+        </div>
+      </div>
+      <div class="card mb16">
+        <div class="cal-dnames" id="cal-dnames"></div>
+        <div class="cal-grid" id="cal-grid"></div>
+      </div>
+      <div class="card"><div class="card-title">Upcoming</div><div id="cal-upcoming"></div></div>
+    </div>
+
+    <!-- ── USERS ── -->
+    <div class="page" id="page-users">
+      <div class="ph">
+        <div class="ph-title"><h2>User Management</h2><p>Manage team members and clients.</p></div>
+        <div class="ph-actions"><button class="btn btn-primary btn-sm" onclick="openUserModal()">+ New User</button></div>
+      </div>
+      <div class="card"><div class="tw"><table>
+        <thead><tr><th>User ID</th><th>Name</th><th>Role</th><th>Created</th><th>Actions</th></tr></thead>
+        <tbody id="users-tb"></tbody>
+      </table></div></div>
+    </div>
+
+    <!-- ── AUDIT ── -->
+    <div class="page" id="page-audit">
+      <div class="ph"><div class="ph-title"><h2>Audit Log</h2><p>System activity trail.</p></div></div>
+      <div class="card"><div id="audit-list"></div></div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="page" id="page-settings">
+      <div class="ph"><div class="ph-title"><h2>Settings</h2><p>Manage your account.</p></div></div>
+      <div class="card" style="max-width:440px">
+        <div class="card-title">Change Password</div>
+        <div class="fg"><label>Current Password</label><input type="password" class="fc" id="pw-old" placeholder="••••••••"></div>
+        <div class="fg"><label>New Password</label><input type="password" class="fc" id="pw-new" placeholder="••••••••"></div>
+        <div class="fg"><label>Confirm New Password</label><input type="password" class="fc" id="pw-confirm" placeholder="••••••••"></div>
+        <button class="btn btn-primary" onclick="changePW()">Update Password</button>
+        <div id="pw-msg" style="margin-top:8px;font-size:11px"></div>
+      </div>
+    </div>
+
+    <!-- ── CLIENT PORTAL ── -->
+    <div class="page" id="page-client-portal">
+      <div class="ph"><div class="ph-title"><h2>Client Portal</h2><p>Your project overview.</p></div></div>
+      <div class="stats-grid" id="cp-stats"></div>
+      <div class="card"><div class="card-title">Your Projects</div><div class="tw"><table>
+        <thead><tr><th>Task</th><th>Category</th><th>Deadline</th><th>Status</th></tr></thead>
+        <tbody id="cp-tb"></tbody>
+      </table></div></div>
+    </div>
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ══ NOTIFICATION PANEL ══ -->
+<div id="npanel">
+  <div class="np-head"><h3>Notifications</h3><button class="mclose" onclick="toggleNP()">✕</button></div>
+  <div class="np-list" id="np-list"><div class="empty"><div class="empty-ico">🔔</div><p>No notifications.</p></div></div>
+</div>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<!-- ══════════════════ MODALS ══════════════════ -->
+
+<!-- TASK -->
+<div class="overlay" id="m-task">
+  <div class="modal">
+    <div class="mh"><h3 id="task-m-title">Create Task</h3><button class="mclose" onclick="closeM('m-task')">✕</button></div>
+    <div class="mb_">
+      <input type="hidden" id="task-eid">
+      <div class="fg"><label>Title</label><input class="fc" id="task-ttl" placeholder="Task title"></div>
+      <div class="fg"><label>Description</label><textarea class="fc" id="task-desc" placeholder="Details"></textarea></div>
+      <div class="form-row">
+        <div class="fg">
+          <label>Category</label>
+          <select class="fc" id="task-cat">
+            <option>Web Development</option><option>Video Editing</option>
+            <option>Graphic Design</option><option>Content Creation</option><option>Client Hunter</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Priority</label>
+          <select class="fc" id="task-pri"><option>Low</option><option>Medium</option><option>High</option><option>Urgent</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Assign To</label><select class="fc" id="task-assign"></select></div>
+        <div class="fg"><label>Deadline</label><input type="date" class="fc" id="task-dl"></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-secondary" onclick="closeM('m-task')">Cancel</button><button class="btn btn-primary" onclick="saveTask()">Save Task</button></div>
+  </div>
+</div>
+
+<!-- SUBMIT WORK -->
+<div class="overlay" id="m-submit">
+  <div class="modal modal-lg">
+    <div class="mh"><h3>Submit Work</h3><button class="mclose" onclick="closeM('m-submit')">✕</button></div>
+    <div class="mb_">
+      <input type="hidden" id="sw-task-id">
+      <div id="sw-task-info" style="padding:11px;background:var(--bg3);border-radius:8px;margin-bottom:14px;font-size:12px"></div>
+      <div class="fg"><label>Notes / Description of work done</label><textarea class="fc" id="sw-notes" placeholder="Explain what you did, any links, references…"></textarea></div>
+      <div class="fg">
+        <label>Proof Files <span style="color:var(--text3);font-weight:400">(multiple · each up to 100MB · video, audio, image, excel, pdf, ppt)</span></label>
+        <div class="dropzone" id="sw-drop"
+          onclick="document.getElementById('sw-finput').click()"
+          ondragover="event.preventDefault();this.classList.add('drag')"
+          ondragleave="this.classList.remove('drag')"
+          ondrop="swDrop(event)">
+          <div class="dropzone-icon">📂</div>
+          <p>Click to browse or drag &amp; drop files here</p>
+          <small>Video · Audio · Images · Excel · PowerPoint · PDF — 100MB max each</small>
+        </div>
+        <input type="file" id="sw-finput" style="display:none"
+          accept="video/*,audio/*,image/*,.xlsx,.xls,.ppt,.pptx,.pdf,.doc,.docx"
+          multiple onchange="swFilePick(this)">
+        <div class="file-list" id="sw-flist"></div>
+        <div class="uprog-wrap hidden" id="sw-prog">
+          <div class="uprog-labels"><span id="sw-prog-txt">Uploading…</span><span id="sw-prog-pct">0%</span></div>
+          <div class="uprog-bar"><div class="uprog-fill" id="sw-prog-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-secondary" onclick="closeM('m-submit')">Cancel</button>
+      <button class="btn btn-primary" id="sw-btn" onclick="doSubmitWork()">🚀 Submit Work</button>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW (admin) -->
+<div class="overlay" id="m-review">
+  <div class="modal modal-xl">
+    <div class="mh"><h3>Review Submission</h3><button class="mclose" onclick="closeM('m-review')">✕</button></div>
+    <div class="mb_">
+      <input type="hidden" id="rv-task-id">
+      <div id="rv-task-info" style="margin-bottom:14px"></div>
+      <div class="divider"></div>
+      <div id="rv-subs"></div>
+      <div class="divider"></div>
+      <div class="fg"><label>Admin Feedback (visible to member)</label><textarea class="fc" id="rv-notes" placeholder="Leave feedback…"></textarea></div>
+    </div>
+    <div class="mf">
+      <button class="btn btn-secondary" onclick="closeM('m-review')">Cancel</button>
+      <button class="btn btn-danger" onclick="doReview('Rejected')">✗ Reject</button>
+      <button class="btn btn-success" onclick="doReview('Approved')">✓ Approve</button>
+    </div>
+  </div>
+</div>
+
+<!-- FILE PREVIEW -->
+<div class="overlay" id="m-preview">
+  <div class="modal modal-lg">
+    <div class="mh">
+      <h3 id="prev-title">Preview</h3>
+      <div style="display:flex;gap:7px;align-items:center">
+        <a id="prev-dl" href="#" download class="btn btn-primary btn-sm">↓ Download</a>
+        <button class="mclose" onclick="closeM('m-preview')">✕</button>
+      </div>
+    </div>
+    <div class="mb_"><div class="preview-media" id="prev-content"></div></div>
+  </div>
+</div>
+
+<!-- REVENUE -->
+<div class="overlay" id="m-rev">
+  <div class="modal">
+    <div class="mh"><h3>Add Revenue</h3><button class="mclose" onclick="closeM('m-rev')">✕</button></div>
+    <div class="mb_">
+      <div class="form-row">
+        <div class="fg"><label>Client Name</label><input class="fc" id="rv-client" placeholder="Client name"></div>
+        <div class="fg"><label>Project Name</label><input class="fc" id="rv-project" placeholder="Project"></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Amount ($)</label><input type="number" class="fc" id="rv-amount" placeholder="0.00" min="0"></div>
+        <div class="fg"><label>Date</label><input type="date" class="fc" id="rv-date"></div>
+      </div>
+      <div class="fg"><label>Notes</label><textarea class="fc" id="rv-notes" placeholder="Notes"></textarea></div>
+    </div>
+    <div class="mf"><button class="btn btn-secondary" onclick="closeM('m-rev')">Cancel</button><button class="btn btn-primary" onclick="saveRevenue()">Save</button></div>
+  </div>
+</div>
+
+<!-- EXPENSE -->
+<div class="overlay" id="m-exp">
+  <div class="modal">
+    <div class="mh"><h3>Add Expense</h3><button class="mclose" onclick="closeM('m-exp')">✕</button></div>
+    <div class="mb_">
+      <div class="form-row">
+        <div class="fg"><label>Category</label><select class="fc" id="exp-cat"><option>Salary</option><option>Marketing</option><option>Tools & Software</option><option>Office</option><option>Freelancer</option><option>Other</option></select></div>
+        <div class="fg"><label>Amount ($)</label><input type="number" class="fc" id="exp-amount" placeholder="0.00" min="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Date</label><input type="date" class="fc" id="exp-date"></div>
+        <div class="fg"><label>Description</label><input class="fc" id="exp-desc" placeholder="Description"></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-secondary" onclick="closeM('m-exp')">Cancel</button><button class="btn btn-primary" onclick="saveExpense()">Save</button></div>
+  </div>
+</div>
+
+<!-- USER -->
+<div class="overlay" id="m-user">
+  <div class="modal">
+    <div class="mh"><h3>Create User</h3><button class="mclose" onclick="closeM('m-user')">✕</button></div>
+    <div class="mb_">
+      <div class="fg"><label>User ID (login ID)</label><input class="fc" id="nu-id" placeholder="e.g. John@Xeron"></div>
+      <div class="fg"><label>Display Name</label><input class="fc" id="nu-name" placeholder="Full name"></div>
+      <div class="fg"><label>Password</label><input type="password" class="fc" id="nu-pw" placeholder="Set password"></div>
+      <div class="fg"><label>Role</label><select class="fc" id="nu-role"><option value="member">Member</option><option value="client">Client</option></select></div>
+    </div>
+    <div class="mf"><button class="btn btn-secondary" onclick="closeM('m-user')">Cancel</button><button class="btn btn-primary" onclick="createUser()">Create</button></div>
+  </div>
+</div>
+
+<!-- EVENT -->
+<div class="overlay" id="m-event">
+  <div class="modal">
+    <div class="mh"><h3>Add Event</h3><button class="mclose" onclick="closeM('m-event')">✕</button></div>
+    <div class="mb_">
+      <div class="fg"><label>Title</label><input class="fc" id="ev-title" placeholder="Event title"></div>
+      <div class="form-row">
+        <div class="fg"><label>Date</label><input type="date" class="fc" id="ev-date"></div>
+        <div class="fg"><label>Type</label><select class="fc" id="ev-type"><option value="meeting">Meeting</option><option value="deadline">Deadline</option><option value="milestone">Milestone</option></select></div>
+      </div>
+      <div class="fg"><label>Notes</label><textarea class="fc" id="ev-notes" placeholder="Notes"></textarea></div>
+    </div>
+    <div class="mf"><button class="btn btn-secondary" onclick="closeM('m-event')">Cancel</button><button class="btn btn-primary" onclick="saveEvent()">Save</button></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ JAVASCRIPT ══════════════════════════ -->
+<script>
+// ╔═══════════════════════════════════════╗
+// ║  CONFIGURE YOUR SUPABASE CREDENTIALS  ║
+// ╚═══════════════════════════════════════╝
+const SUPABASE_URL      = 'https://wzkuuxyuypecubgezaco.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_CBvOlv0r0p60Gd6dWzFptw_zRYvi2SM';
+
+// ── CONSTANTS ──────────────────────────────────────
+const CAT_POINTS = {'Web Development':16,'Video Editing':10,'Graphic Design':8,'Content Creation':6,'Client Hunter':6};
+const ADMIN_ID   = 'Anish@Dipa';
+const ADMIN_HASH = hp('20661116');
+
+// ── HASH (matches DB seed) ──────────────────────────
+function hp(pw){ let h=0; for(let i=0;i<pw.length;i++){h=((h<<5)-h)+pw.charCodeAt(i);h|=0;} return btoa(String(Math.abs(h))); }
+
+// ── SUPABASE REST ───────────────────────────────────
+const SB={
+  async req(method, path, body){
+    const url = `${SUPABASE_URL}/rest/v1/${path}`;
+    const headers = {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    };
+    const opts = { method, headers };
+    if(body !== undefined) opts.body = JSON.stringify(body);
+    const r = await fetch(url, opts);
+    if(!r.ok){
+      let msg = r.status + ' ' + r.statusText;
+      try{ const j = await r.json(); msg = j.message || j.error || j.hint || msg; }catch(x){}
+      throw new Error(msg);
+    }
+    const txt = await r.text();
+    if(!txt) return [];
+    try{ return JSON.parse(txt); }catch(e){ return []; }
+  },
+  get:  (p)    => SB.req('GET',    p),
+  post: (p, b) => SB.req('POST',   p, b),
+  patch:(p, b) => SB.req('PATCH',  p, b),
+  del:  (p)    => SB.req('DELETE', p),
+
+  async upload(bucket, path, file){
+    const url = `${SUPABASE_URL}/storage/v1/object/${bucket}/${encodeURIComponent(path).replace(/%2F/g,'/')}`;
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_ANON_KEY,
+        'x-upsert': 'true',
+        'Content-Type': file.type || 'application/octet-stream'
+      },
+      body: file
+    });
+    if(!r.ok){
+      let msg = 'Storage upload failed (' + r.status + ')';
+      try{ const j = await r.json(); msg = j.message || j.error || msg; }catch(x){}
+      throw new Error(msg);
+    }
+    // Return clean public URL
+    return `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`;
+  }
+};
+
+// ── STATE ───────────────────────────────────────────
+let CU=null, CR=null, chatWith=null;
+let calY=new Date().getFullYear(), calM=new Date().getMonth();
+let swFiles=[], charts={}, rtWs=null, rtInts=[];
+let recordCols=['Name','Status','Notes','Value'], recordRows=[];
+
+// Always use this to get current user ID — works for both admin and DB users
+function myId(){ return CU?.user_id || CU?.id || ''; }
+
+// ── NAV CONFIG ──────────────────────────────────────
+const NAV={
+  admin:[
+    {s:'Main',items:[{id:'dashboard',i:'⬡',l:'Dashboard'},{id:'tasks',i:'✓',l:'Tasks'},{id:'submissions',i:'📂',l:'Submissions'},{id:'performance',i:'📈',l:'Performance'}]},
+    {s:'Finance',items:[{id:'profit',i:'💰',l:'Profit'},{id:'revenue',i:'↑',l:'Revenue'},{id:'expenses',i:'↓',l:'Expenses'}]},
+    {s:'Team',items:[{id:'records',i:'📋',l:'Records'},{id:'messages',i:'💬',l:'Messages'},{id:'calendar',i:'📅',l:'Calendar'}]},
+    {s:'Admin',items:[{id:'users',i:'👥',l:'Users'},{id:'audit',i:'📜',l:'Audit Log'},{id:'settings',i:'⚙',l:'Settings'}]}
+  ],
+  member:[
+    {s:'Main',items:[{id:'dashboard',i:'⬡',l:'Dashboard'},{id:'tasks',i:'✓',l:'My Tasks'},{id:'submit-work',i:'📤',l:'Submit Work'},{id:'performance',i:'📈',l:'Performance'}]},
+    {s:'Team',items:[{id:'records',i:'📋',l:'Records'},{id:'messages',i:'💬',l:'Messages'},{id:'calendar',i:'📅',l:'Calendar'}]},
+    {s:'Account',items:[{id:'settings',i:'⚙',l:'Settings'}]}
+  ],
+  client:[
+    {s:'Portal',items:[{id:'client-portal',i:'⬡',l:'Overview'},{id:'messages',i:'💬',l:'Messages'}]},
+    {s:'Account',items:[{id:'settings',i:'⚙',l:'Settings'}]}
+  ]
+};
+
+// ══════════════════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════════════════
+async function doLogin(){
+  const id=V('l-id').trim(), pw=V('l-pw'), role=V('l-role');
+  const err=G('l-err'); err.style.display='none';
+  if(!id||!pw){showErr('Enter ID and password.');return;}
+  if(role==='admin'&&id===ADMIN_ID&&hp(pw)===ADMIN_HASH){
+    CU={id:ADMIN_ID,user_id:ADMIN_ID,name:'Admin',role:'admin'}; CR='admin'; initApp(); return;
+  }
+  try{
+    const users=await SB.get(`users?user_id=eq.${enc(id)}&role=eq.${enc(role)}&select=*`);
+    if(!users||!users.length){showErr('User not found.');return;}
+    const u=users[0];
+    if(u.password_hash!==hp(pw)){showErr('Wrong password.');return;}
+    CU=u; CR=u.role;
+    await log('Login',`${u.name||u.user_id} logged in`);
+    initApp();
+  }catch(e){showErr('Cannot connect to database. Check Supabase credentials.');console.error(e);}
+  function showErr(m){err.textContent=m;err.style.display='block';}
+}
+
+function logout(){
+  CU=null;CR=null;chatWith=null;swFiles=[];
+  rtInts.forEach(clearInterval); rtInts=[];
+  stopMsgPolling();
+  if(rtWs){try{rtWs.close();}catch(e){} rtWs=null;}
+  G('app').style.display='none'; G('app').classList.remove('active');
+  G('login-screen').style.display='flex';
+  G('l-id').value=''; G('l-pw').value='';
+}
+
+function initApp(){
+  G('login-screen').style.display='none';
+  G('app').style.display='flex'; G('app').classList.add('active');
+  G('sb-av').textContent=(CU.name||CU.user_id||'U')[0].toUpperCase();
+  G('sb-uname').textContent=CU.name||CU.user_id;
+  G('sb-urole').textContent=CR.charAt(0).toUpperCase()+CR.slice(1);
+  buildNav(); go('dashboard'); loadNotifs(); startRT();
+}
+
+// ══════════════════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════════════════
+function buildNav(){
+  const cfg=NAV[CR]||NAV.member;
+  G('sb-nav').innerHTML=cfg.map(sec=>`
+    <div class="nav-sec">
+      <div class="nav-sec-label">${sec.s}</div>
+      ${sec.items.map(it=>`<div class="nav-item" id="nav-${it.id}" onclick="go('${it.id}')"><span class="nav-icon">${it.i}</span><span>${it.l}</span></div>`).join('')}
+    </div>`).join('');
+}
+
+function go(pid){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pg=G('page-'+pid); if(pg) pg.classList.add('active');
+  const nv=G('nav-'+pid); if(nv) nv.classList.add('active');
+  G('bc').textContent=pid.charAt(0).toUpperCase()+pid.slice(1).replace('-',' ');
+  closeSB();
+  switch(pid){
+    case 'dashboard':     loadDashboard(); break;
+    case 'tasks':         loadTasks(); break;
+    case 'submit-work':   loadSubmitWork(); break;
+    case 'submissions':   loadSubmissionsPage(); break;
+    case 'performance':   loadPerformance(); break;
+    case 'profit':        loadProfit(); break;
+    case 'revenue':       loadRevenue(); break;
+    case 'expenses':      loadExpenses(); break;
+    case 'records':       loadRecords(); break;
+    case 'messages':      loadMessages(); break;
+    case 'calendar':      renderCalendar(); break;
+    case 'users':         loadUsers(); break;
+    case 'audit':         loadAudit(); break;
+    case 'client-portal': loadClientPortal(); break;
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════════════════
+async function loadDashboard(){
+  try{
+    const [tasks,revenue,expenses,users]=await Promise.all([
+      SB.get('tasks?select=*'), SB.get('revenue?select=*'),
+      SB.get('expenses?select=*'), SB.get('users?select=*')
+    ]);
+    const rev=sum(revenue,'amount'), exp=sum(expenses,'amount'), profit=rev-exp;
+    const approved=(tasks||[]).filter(t=>t.status==='Approved').length;
+    const pending=(tasks||[]).filter(t=>['Pending','Submitted','Under Review'].includes(t.status)).length;
+    G('d-stats').innerHTML=`
+      <div class="stat-card"><div class="stat-icon" style="background:#7c6bff22">💰</div><div class="stat-val">$${fmt(rev)}</div><div class="stat-lbl">Total Revenue</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:#22d38322">📈</div><div class="stat-val text-green">$${fmt(profit)}</div><div class="stat-lbl">Net Profit</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:#4facfe22">✓</div><div class="stat-val">${approved}</div><div class="stat-lbl">Tasks Approved</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:#ffbe0b22">⏳</div><div class="stat-val">${pending}</div><div class="stat-lbl">Tasks Pending</div></div>`;
+    drawRevExp(revenue||[],expenses||[]);
+    drawTaskDist(tasks||[]);
+    drawDashLB(tasks||[],users||[]);
+    drawDashActivity(tasks||[]);
+  }catch(e){G('d-stats').innerHTML='<div style="padding:16px;color:var(--text2)">⚠ Check Supabase configuration.</div>';console.error(e);}
+}
+
+function drawRevExp(rev,exp){
+  const ctx=G('c-revexp'); if(!ctx) return;
+  if(charts.re) charts.re.destroy();
+  const months=last6();
+  charts.re=new Chart(ctx,{type:'line',data:{labels:months,datasets:[
+    {label:'Revenue',data:months.map(m=>rev.filter(r=>r.date&&r.date.startsWith(m)).reduce((s,r)=>s+Number(r.amount),0)),borderColor:'#22d383',backgroundColor:'#22d38322',tension:.4,fill:true},
+    {label:'Expenses',data:months.map(m=>exp.filter(e=>e.date&&e.date.startsWith(m)).reduce((s,e)=>s+Number(e.amount),0)),borderColor:'#ff4d6d',backgroundColor:'#ff4d6d22',tension:.4,fill:true}
+  ]},options:co()});
+}
+
+function drawTaskDist(tasks){
+  const ctx=G('c-taskdist'); if(!ctx) return;
+  if(charts.td) charts.td.destroy();
+  const st=['Pending','Submitted','Under Review','Approved','Rejected'];
+  const cl=['#ffbe0b','#4facfe','#ff6b35','#22d383','#ff4d6d'];
+  charts.td=new Chart(ctx,{type:'doughnut',data:{labels:st,datasets:[{data:st.map(s=>tasks.filter(t=>t.status===s).length),backgroundColor:cl,borderWidth:0}]},options:{...co(),cutout:'65%'}});
+}
+
+function drawDashLB(tasks,users){
+  const lb=calcLB(tasks,users).slice(0,5);
+  const max=lb[0]?.points||1;
+  G('d-lb').innerHTML=lb.length?lb.map((s,i)=>`
+    <div class="lb-item">
+      <div class="rnk ${['r1','r2','r3','rn','rn'][i]||'rn'}">${i+1}</div>
+      <div class="lb-bar-wrap"><div style="font-size:12px;font-weight:500">${esc(s.name)}</div><div class="lb-bar"><div class="lb-bar-fill" style="width:${s.points/max*100}%"></div></div></div>
+      <div class="lb-pts">${s.points}</div>
+    </div>`).join(''):'<div class="empty"><p>No data yet.</p></div>';
+}
+
+function drawDashActivity(tasks){
+  const recent=[...(tasks||[])].sort((a,b)=>new Date(b.updated_at||b.created_at)-new Date(a.updated_at||a.created_at)).slice(0,6);
+  G('d-activity').innerHTML=recent.length?recent.map(t=>`
+    <div class="audit-row">
+      <div class="audit-ico">${stIco(t.status)}</div>
+      <div class="audit-txt"><div class="audit-act">${esc(t.title)}</div><div class="audit-meta">${t.status} · ${t.category}</div></div>
+    </div>`).join(''):'<div class="empty"><p>No activity yet.</p></div>';
+}
+
+// ══════════════════════════════════════════════════════
+//  TASKS
+// ══════════════════════════════════════════════════════
+async function loadTasks(){
+  const isAdmin=CR==='admin';
+  G('btn-new-task').classList.toggle('hidden',!isAdmin);
+  try{
+    let q='tasks?select=*&order=created_at.desc';
+    if(CR==='member') q+=`&assigned_to=eq.${enc(CU.user_id)}`;
+    const sf=V('tf-status'); if(sf) q+=`&status=eq.${enc(sf)}`;
+    const tasks=await SB.get(q);
+    const tb=G('tasks-tb');
+    if(!tasks||!tasks.length){tb.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-ico">✓</div><p>No tasks found.</p></div></td></tr>`;return;}
+    tb.innerHTML=tasks.map(t=>`<tr>
+      <td><div class="fw600" style="font-size:12px">${esc(t.title)}</div><div style="font-size:10px;color:var(--text3)">${esc((t.description||'').substring(0,50))}</div></td>
+      <td style="font-size:11px">${esc(t.assigned_to||'—')}</td>
+      <td><span class="badge b-submitted">${esc(t.category)}</span></td>
+      <td><span class="badge b-${(t.priority||'').toLowerCase()}">${esc(t.priority)}</span></td>
+      <td style="font-size:11px">${t.deadline?fmtD(t.deadline):'—'}</td>
+      <td><span class="badge b-${stCls(t.status)}">${esc(t.status)}</span></td>
+      <td><div class="tda">
+        ${isAdmin?`<button class="btn btn-secondary btn-xs" onclick="editTask(${JSON.stringify(t).replace(/"/g,'&quot;')})">✏</button>
+          ${['Submitted','Under Review'].includes(t.status)?`<button class="btn btn-warn btn-xs" onclick="openReview('${t.id}')">Review</button>`:''}
+          <button class="btn btn-danger btn-xs" onclick="delTask('${t.id}')">✕</button>`:''}
+        ${CR==='member'&&t.status==='Pending'?`<button class="btn btn-success btn-xs" onclick="openSubmit('${t.id}')">Submit</button>`:''}
+        ${CR==='member'&&t.status==='Rejected'?`<button class="btn btn-secondary btn-xs" onclick="openSubmit('${t.id}')">Resubmit</button>`:''}
+        ${CR==='member'&&t.status==='Submitted'?`<span style="font-size:10px;color:var(--blue)">⏳ Under review</span>`:''}
+      </div></td>
+    </tr>`).join('');
+  }catch(e){console.error(e);}
+}
+
+function openTaskModal(){
+  G('task-eid').value=''; G('task-m-title').textContent='Create Task';
+  G('task-ttl').value=''; G('task-desc').value=''; G('task-dl').value='';
+  loadMemberOpts('task-assign'); openM('m-task');
+}
+function editTask(t){
+  G('task-eid').value=t.id; G('task-m-title').textContent='Edit Task';
+  G('task-ttl').value=t.title||''; G('task-desc').value=t.description||'';
+  G('task-cat').value=t.category||'Web Development';
+  G('task-pri').value=t.priority||'Medium';
+  G('task-dl').value=t.deadline||'';
+  loadMemberOpts('task-assign',t.assigned_to); openM('m-task');
+}
+async function loadMemberOpts(selId,sel){
+  try{const u=await SB.get('users?role=eq.member&select=user_id,name');
+  G(selId).innerHTML=`<option value="">Unassigned</option>`+(u||[]).map(u=>`<option value="${esc(u.user_id)}"${sel===u.user_id?' selected':''}>${esc(u.name||u.user_id)}</option>`).join('');}catch(e){}
+}
+async function saveTask(){
+  const id=V('task-eid'), cat=V('task-cat');
+  const data={title:V('task-ttl').trim(),description:V('task-desc').trim(),category:cat,priority:V('task-pri'),
+    assigned_to:V('task-assign')||null,deadline:V('task-dl')||null,points:CAT_POINTS[cat]||0,updated_at:new Date().toISOString()};
+  if(!data.title){toast('Title required','⚠','yellow');return;}
+  try{
+    if(id){await SB.patch(`tasks?id=eq.${id}`,data);await log('Task Edit',`"${data.title}" updated`);toast('Task updated','✓','green');}
+    else{data.status='Pending';data.created_at=new Date().toISOString();await SB.post('tasks',data);
+      await log('Task Create',`"${data.title}" created`);
+      if(data.assigned_to) await notify(data.assigned_to,'Task Assigned',`New task: ${data.title}`);
+      toast('Task created','✓','green');}
+    closeM('m-task'); loadTasks();
+  }catch(e){toast('Error saving task','✕','red');console.error(e);}
+}
+async function delTask(id){
+  if(!confirm('Delete this task?')) return;
+  try{await SB.del(`tasks?id=eq.${id}`);await log('Task Delete',`Task ${id} deleted`);toast('Deleted','✓','green');loadTasks();}catch(e){}
+}
+
+// ══════════════════════════════════════════════════════
+//  SUBMIT WORK — dedicated page for members
+// ══════════════════════════════════════════════════════
+async function loadSubmitWork(){
+  const myId=CU.user_id;
+  try{
+    const tasks=await SB.get(`tasks?assigned_to=eq.${enc(myId)}&select=*&order=created_at.desc`);
+    const tb=G('sw-tasks-tb');
+    tb.innerHTML=(tasks&&tasks.length)?tasks.map(t=>`<tr>
+      <td><div class="fw600" style="font-size:12px">${esc(t.title)}</div></td>
+      <td><span class="badge b-submitted">${esc(t.category)}</span></td>
+      <td class="text-accent fw600">${t.points}</td>
+      <td style="font-size:11px">${t.deadline?fmtD(t.deadline):'—'}</td>
+      <td><span class="badge b-${stCls(t.status)}">${esc(t.status)}</span></td>
+      <td>
+        ${['Pending','Rejected'].includes(t.status)?`<button class="btn btn-success btn-xs" onclick="openSubmit('${t.id}')">📤 Submit</button>`:''}
+        ${t.status==='Submitted'?`<span style="font-size:10px;color:var(--blue)">⏳ Under review</span>`:''}
+        ${t.status==='Approved'?`<span style="font-size:10px;color:var(--green)">✓ Approved</span>`:''}
+      </td>
+    </tr>`).join(''):`<tr><td colspan="6"><div class="empty"><div class="empty-ico">📋</div><p>No tasks assigned yet.</p></div></td></tr>`;
+    // load my submissions
+    const subs=await SB.get(`submissions?submitted_by=eq.${enc(myId)}&select=*&order=created_at.desc`);
+    const sl=G('my-subs-list');
+    if(!subs||!subs.length){sl.innerHTML='<div class="empty"><div class="empty-ico">📂</div><p>No submissions yet.</p></div>';return;}
+    sl.innerHTML=subs.map(s=>{
+      const files=parseFiles(s);
+      return `<div class="sub-card">
+        <div class="sub-head">
+          <div class="sub-user">
+            <div class="sub-av">${(s.submitted_by||'U')[0].toUpperCase()}</div>
+            <div><div class="fw600 text-xs">${esc(s.submitted_by)}</div><div style="font-size:10px;color:var(--text3)">${fmtT(s.created_at)}</div></div>
+          </div>
+          <span class="badge b-submitted">Task #${s.task_id?.slice(-6)||'?'}</span>
+        </div>
+        ${s.notes?`<div class="sub-notes">${esc(s.notes)}</div>`:''}
+        <div class="file-chips">
+          ${files.length?files.map(f=>`<div class="file-chip">
+            <span>${fIco(f.name)}</span>
+            <span class="file-chip-name" title="${esc(f.name)}">${esc(f.name)}</span>
+            <button onclick="previewFile('${encodeURIComponent(f.url)}','${esc(f.name)}')">👁 View</button>
+            <a href="${esc(f.url)}" download="${esc(f.name)}">↓ Download</a>
+          </div>`).join(''):'<span style="font-size:11px;color:var(--text3)">No files</span>'}
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){console.error(e);}
+}
+
+// ══════════════════════════════════════════════════════
+//  SUBMISSIONS — admin view
+// ══════════════════════════════════════════════════════
+async function loadSubmissionsPage(){
+  try{
+    let q='tasks?select=*&order=updated_at.desc';
+    const f=V('sub-filter'); if(f) q+=`&status=eq.${enc(f)}`;
+    const tasks=await SB.get(q);
+    // Get all submissions
+    const subs=await SB.get('submissions?select=*&order=created_at.desc');
+    const sl=G('submissions-list');
+    if(!tasks||!tasks.length){sl.innerHTML='<div class="empty"><div class="empty-ico">📂</div><p>No submissions yet.</p></div>';return;}
+    // Only show tasks that have submissions
+    const tasksWithSubs=tasks.filter(t=>['Submitted','Under Review','Approved','Rejected'].includes(t.status));
+    if(!tasksWithSubs.length){sl.innerHTML='<div class="empty"><div class="empty-ico">📂</div><p>No submissions yet.</p></div>';return;}
+    sl.innerHTML=tasksWithSubs.map(t=>{
+      const tSubs=(subs||[]).filter(s=>s.task_id===t.id);
+      return `<div class="card mb16">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+          <div>
+            <div class="fw600" style="font-size:14px">${esc(t.title)}</div>
+            <div style="display:flex;gap:8px;margin-top:5px;flex-wrap:wrap">
+              <span class="badge b-submitted">${esc(t.category)}</span>
+              <span class="badge b-${(t.priority||'').toLowerCase()}">${esc(t.priority)}</span>
+              <span class="badge b-${stCls(t.status)}">${esc(t.status)}</span>
+              <span class="text-accent fw600 text-xs">${t.points} pts</span>
+              ${t.assigned_to?`<span style="font-size:10px;color:var(--text2)">👤 ${esc(t.assigned_to)}</span>`:''}
+            </div>
+            ${t.admin_notes?`<div style="margin-top:7px;padding:7px 10px;background:var(--ybg);border-radius:6px;font-size:11px;color:var(--yellow)">Feedback: ${esc(t.admin_notes)}</div>`:''}
+          </div>
+          ${['Submitted','Under Review'].includes(t.status)?`<button class="btn btn-primary btn-sm" onclick="openReview('${t.id}')">Review</button>`:`<button class="btn btn-secondary btn-sm" onclick="openReview('${t.id}')">View</button>`}
+        </div>
+        ${tSubs.map(s=>{
+          const files=parseFiles(s);
+          return `<div class="sub-card">
+            <div class="sub-head">
+              <div class="sub-user">
+                <div class="sub-av">${(s.submitted_by||'U')[0].toUpperCase()}</div>
+                <div><div class="fw600 text-xs">${esc(s.submitted_by)}</div><div style="font-size:10px;color:var(--text3)">${fmtT(s.created_at)}</div></div>
+              </div>
+            </div>
+            ${s.notes?`<div class="sub-notes">${esc(s.notes)}</div>`:''}
+            <div class="file-chips">
+              ${files.length?files.map(f=>`<div class="file-chip">
+                <span>${fIco(f.name)}</span>
+                <span class="file-chip-name" title="${esc(f.name)}">${esc(f.name)}</span>
+                <button onclick="previewFile('${encodeURIComponent(f.url)}','${esc(f.name)}')">👁 View</button>
+                <a href="${esc(f.url)}" download="${esc(f.name)}">↓ Download</a>
+              </div>`).join(''):'<span style="font-size:11px;color:var(--text3)">No files attached</span>'}
+            </div>
+          </div>`;
+        }).join('') || '<div style="font-size:12px;color:var(--text3);padding:10px 0">No submission files yet.</div>'}
+      </div>`;
+    }).join('');
+  }catch(e){console.error(e);}
+}
+
+// ── OPEN SUBMIT MODAL ──────────────────────────────────
+function openSubmit(taskId){
+  G('sw-task-id').value=taskId; G('sw-notes').value='';
+  G('sw-flist').innerHTML=''; G('sw-prog').classList.add('hidden');
+  G('sw-btn').textContent='🚀 Submit Work'; G('sw-btn').disabled=false;
+  swFiles=[];
+  SB.get(`tasks?id=eq.${taskId}&select=title,category,points,deadline`).then(t=>{
+    if(t&&t[0]) G('sw-task-info').innerHTML=`<strong>${esc(t[0].title)}</strong> &nbsp;·&nbsp; ${esc(t[0].category)} &nbsp;·&nbsp; <span class="text-accent">${t[0].points} pts</span>${t[0].deadline?` &nbsp;·&nbsp; Due: ${fmtD(t[0].deadline)}`:''}`;
+  }).catch(()=>{});
+  openM('m-submit');
+}
+
+function swFilePick(input){addSWFiles(Array.from(input.files));input.value='';}
+function swDrop(e){e.preventDefault();G('sw-drop').classList.remove('drag');addSWFiles(Array.from(e.dataTransfer.files));}
+function addSWFiles(files){
+  files.forEach(f=>{
+    if(f.size>100*1024*1024){toast(`${f.name} exceeds 100MB — skipped`,'⚠','yellow');return;}
+    swFiles.push(f);
+  });
+  renderSWFiles();
+}
+function renderSWFiles(){
+  G('sw-flist').innerHTML=swFiles.map((f,i)=>`
+    <div class="file-row">
+      <span class="ficon">${fIco(f.name)}</span>
+      <div class="finfo"><div class="fname">${esc(f.name)}</div><div class="fsize">${(f.size/1024/1024).toFixed(2)} MB</div></div>
+      <button class="frem" onclick="swFiles.splice(${i},1);renderSWFiles()">✕</button>
+    </div>`).join('');
+}
+
+async function doSubmitWork(){
+  const taskId = G('sw-task-id').value.trim();
+  const notes  = G('sw-notes').value.trim();
+  const btn    = G('sw-btn');
+
+  // ── Validate ──────────────────────────────────────
+  if(!taskId){
+    toast('Error: No task ID found. Please close and reopen the submit form.','✕','red');
+    return;
+  }
+  if(!notes && swFiles.length === 0){
+    toast('Add a note OR attach at least one file before submitting.','⚠','yellow');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Working…';
+
+  // ── Step 1: Upload files one by one ──────────────
+  const uploaded = [];
+  if(swFiles.length > 0){
+    G('sw-prog').classList.remove('hidden');
+    for(let i = 0; i < swFiles.length; i++){
+      const f = swFiles[i];
+      G('sw-prog-fill').style.width = Math.round(i/swFiles.length*100) + '%';
+      G('sw-prog-pct').textContent  = Math.round(i/swFiles.length*100) + '%';
+      G('sw-prog-txt').textContent  = `Uploading ${i+1}/${swFiles.length}: ${f.name}`;
+      btn.textContent = `Uploading ${i+1}/${swFiles.length}…`;
+      try{
+        const clean = f.name.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9._-]/g,'_');
+        const path  = `tasks/${taskId}/${Date.now()}_${clean}`;
+        const url   = await SB.upload('task-files', path, f);
+        uploaded.push({ name:f.name, url, size:f.size, type:f.type||'' });
+      }catch(err){
+        console.error('Upload error:', err);
+        toast(`❌ Could not upload "${f.name}" — ${err.message}`, '✕', 'red');
+        // continue uploading remaining files
+      }
+    }
+    G('sw-prog-fill').style.width = '100%';
+    G('sw-prog-pct').textContent  = '100%';
+    G('sw-prog-txt').textContent  = `${uploaded.length}/${swFiles.length} uploaded`;
+  }
+
+  // ── Step 2: Insert into submissions table ─────────
+  btn.textContent = '💾 Saving…';
+  const uid = myId();
+
+  // Build the smallest possible payload to avoid column mismatch errors
+  const payload = {
+    task_id:      taskId,
+    submitted_by: uid,
+    notes:        notes || '',
+    file_url:     uploaded[0]?.url  || null,
+    file_name:    uploaded[0]?.name || null,
+    file_urls:    JSON.stringify(uploaded),
+    created_at:   new Date().toISOString()
+  };
+
+  let insertOK = false;
+
+  // Attempt 1: full payload including file_urls
+  try{
+    await SB.post('submissions', payload);
+    insertOK = true;
+    console.log('Submission inserted (full payload)');
+  }catch(e1){
+    console.warn('Full payload failed:', e1.message);
+    // Attempt 2: strip file_urls in case column doesn't exist yet
+    try{
+      await SB.post('submissions', {
+        task_id:      payload.task_id,
+        submitted_by: payload.submitted_by,
+        notes:        payload.notes,
+        file_url:     payload.file_url,
+        file_name:    payload.file_name,
+        created_at:   payload.created_at
+      });
+      insertOK = true;
+      console.log('Submission inserted (fallback payload)');
+    }catch(e2){
+      console.error('Both insert attempts failed:', e2.message);
+      toast(`❌ Could not save submission: ${e2.message}`, '✕', 'red');
+      btn.disabled = false;
+      btn.textContent = '🚀 Submit Work';
+      return;
+    }
+  }
+
+  // ── Step 3: Update task status ────────────────────
+  if(insertOK){
+    try{
+      await SB.patch(`tasks?id=eq.${taskId}`, {
+        status: 'Submitted',
+        updated_at: new Date().toISOString()
+      });
+    }catch(e){
+      console.warn('Task status update failed:', e.message);
+      // Not fatal — submission was saved
+    }
+
+    // ── Step 4: Notify + log (non-critical) ──────────
+    try{ await notify('admin','📤 New Submission', `${uid} submitted work (${uploaded.length} file(s))`); }catch(e){}
+    try{ await log('Task Submit', `${uid} submitted task ${taskId} with ${uploaded.length} file(s)`); }catch(e){}
+
+    // ── Done! ─────────────────────────────────────────
+    const msg = uploaded.length > 0
+      ? `✅ Submitted! ${uploaded.length} file(s) uploaded.`
+      : `✅ Submitted with notes (no files).`;
+    toast(msg, '✓', 'green');
+    closeM('m-submit');
+    swFiles = [];
+    await loadSubmitWork();
+    await loadTasks();
+  }
+
+  btn.disabled = false;
+  btn.textContent = '🚀 Submit Work';
+}
+
+// ── REVIEW MODAL (admin) ───────────────────────────────
+async function openReview(taskId){
+  G('rv-task-id').value=taskId; G('rv-notes').value='';
+  try{
+    const [tasks,subs]=await Promise.all([
+      SB.get(`tasks?id=eq.${taskId}&select=*`),
+      SB.get(`submissions?task_id=eq.${taskId}&select=*&order=created_at.desc`)
+    ]);
+    const t=tasks[0]||{};
+    G('rv-task-info').innerHTML=`
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+        <div><div class="text-xs text-muted">Task</div><div class="fw600">${esc(t.title)}</div></div>
+        <div><div class="text-xs text-muted">Category</div><span class="badge b-submitted">${esc(t.category)}</span></div>
+        <div><div class="text-xs text-muted">Points</div><div class="text-accent fw600">${t.points}</div></div>
+        <div><div class="text-xs text-muted">Assignee</div><div>${esc(t.assigned_to||'—')}</div></div>
+        <div><div class="text-xs text-muted">Status</div><span class="badge b-${stCls(t.status)}">${esc(t.status)}</span></div>
+      </div>
+      ${t.admin_notes?`<div style="margin-top:10px;padding:8px 11px;background:var(--ybg);border-radius:7px;font-size:11px;color:var(--yellow)">Previous feedback: ${esc(t.admin_notes)}</div>`:''}`;
+    const rsubs=G('rv-subs');
+    if(!subs||!subs.length){rsubs.innerHTML='<div style="font-size:12px;color:var(--text2)">No submissions yet.</div>';openM('m-review');return;}
+    rsubs.innerHTML=`<div style="font-size:10px;font-weight:600;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">${subs.length} Submission(s)</div>`+
+    subs.map(s=>{
+      const files=parseFiles(s);
+      return `<div class="sub-card">
+        <div class="sub-head">
+          <div class="sub-user">
+            <div class="sub-av">${(s.submitted_by||'U')[0].toUpperCase()}</div>
+            <div><div class="fw600 text-xs">${esc(s.submitted_by)}</div><div style="font-size:10px;color:var(--text3)">${fmtT(s.created_at)}</div></div>
+          </div>
+        </div>
+        ${s.notes?`<div class="sub-notes">${esc(s.notes)}</div>`:''}
+        <div class="file-chips">
+          ${files.length?files.map(f=>`<div class="file-chip">
+            <span>${fIco(f.name)}</span>
+            <span class="file-chip-name" title="${esc(f.name)}">${esc(f.name)}</span>
+            <button onclick="previewFile('${encodeURIComponent(f.url)}','${esc(f.name)}')">👁 View</button>
+            <a href="${esc(f.url)}" download="${esc(f.name)}">↓ Download</a>
+          </div>`).join(''):'<span style="font-size:11px;color:var(--text3)">No files</span>'}
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){console.error(e);}
+  openM('m-review');
+}
+
+async function doReview(decision){
+  const taskId=V('rv-task-id'), notes=V('rv-notes').trim();
+  try{
+    await SB.patch(`tasks?id=eq.${taskId}`,{status:decision,admin_notes:notes,updated_at:new Date().toISOString()});
+    const t=await SB.get(`tasks?id=eq.${taskId}&select=assigned_to,title`);
+    if(t&&t[0]&&t[0].assigned_to) await notify(t[0].assigned_to,`Task ${decision}`,`"${t[0].title}" was ${decision.toLowerCase()}${notes?': '+notes:''}`);
+    await log('Task Review',`Task ${taskId} ${decision}`);
+    toast(`Task ${decision.toLowerCase()}!`,decision==='Approved'?'✓':'✕',decision==='Approved'?'green':'red');
+    closeM('m-review'); loadTasks(); loadSubmissionsPage();
+  }catch(e){toast('Error','✕','red');console.error(e);}
+}
+
+// ── FILE PREVIEW ──────────────────────────────────────
+function previewFile(encUrl,name){
+  const url=decodeURIComponent(encUrl);
+  const ext=(name||'').split('.').pop().toLowerCase();
+  G('prev-title').textContent=name;
+  G('prev-dl').href=url; G('prev-dl').download=name;
+  const c=G('prev-content');
+  if(['jpg','jpeg','png','gif','webp','svg'].includes(ext)){
+    c.innerHTML=`<img src="${url}" alt="${esc(name)}" style="max-width:100%;max-height:460px;border-radius:8px">`;
+  }else if(['mp4','webm','mov','avi'].includes(ext)){
+    c.innerHTML=`<video controls style="width:100%;border-radius:8px"><source src="${url}">Browser cannot play this video.</video>`;
+  }else if(['mp3','wav','ogg','aac','m4a'].includes(ext)){
+    c.innerHTML=`<div style="padding:28px 0;text-align:center"><div style="font-size:44px;margin-bottom:14px">🎵</div><div style="font-size:13px;color:var(--text2);margin-bottom:14px">${esc(name)}</div><audio controls style="width:100%"><source src="${url}">Browser cannot play this audio.</audio></div>`;
+  }else if(ext==='pdf'){
+    c.innerHTML=`<iframe src="${url}" style="width:100%;height:480px;border:none;border-radius:8px"></iframe>`;
+  }else{
+    c.innerHTML=`<div style="padding:40px 20px;text-align:center"><div style="font-size:44px;margin-bottom:14px">${fIco(name)}</div><div style="font-size:13px;color:var(--text2);margin-bottom:6px">${esc(name)}</div><p style="font-size:11px;color:var(--text3)">Preview not available. Download to view.</p><a href="${url}" download="${esc(name)}" class="btn btn-primary" style="margin-top:14px;display:inline-flex">↓ Download File</a></div>`;
+  }
+  openM('m-preview');
+}
+
+function parseFiles(s){
+  try{const f=JSON.parse(s.file_urls||'[]');if(f.length) return f;}catch(e){}
+  if(s.file_url) return [{url:s.file_url,name:s.file_name||'file'}];
+  return [];
+}
+
+function fIco(name){
+  const ext=(name||'').split('.').pop().toLowerCase();
+  if(['mp4','webm','mov','avi'].includes(ext)) return '🎬';
+  if(['mp3','wav','ogg','aac','m4a'].includes(ext)) return '🎵';
+  if(['jpg','jpeg','png','gif','webp','svg'].includes(ext)) return '🖼️';
+  if(ext==='pdf') return '📄';
+  if(['xlsx','xls','csv'].includes(ext)) return '📊';
+  if(['ppt','pptx'].includes(ext)) return '📊';
+  if(['doc','docx'].includes(ext)) return '📝';
+  return '📎';
+}
+
+// ══════════════════════════════════════════════════════
+//  PERFORMANCE
+// ══════════════════════════════════════════════════════
+async function loadPerformance(){
+  try{
+    const [tasks,users]=await Promise.all([SB.get('tasks?select=*'),SB.get('users?select=*')]);
+    const lb=calcLB(tasks||[],users||[]);
+    const myId=CU.user_id, my=lb.find(s=>s.id===myId)||{points:0,approved:0,total:0};
+    G('perf-stats').innerHTML=`
+      <div class="stat-card"><div class="stat-icon" style="background:var(--glow)">⭐</div><div class="stat-val">${my.points}</div><div class="stat-lbl">My Points</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--gbg)">✓</div><div class="stat-val">${my.approved}</div><div class="stat-lbl">Approved</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--ybg)">📊</div><div class="stat-val">${my.total?Math.round(my.approved/my.total*100):0}%</div><div class="stat-lbl">Approval Rate</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--rbg)">🏆</div><div class="stat-val">#${lb.findIndex(s=>s.id===myId)+1||'—'}</div><div class="stat-lbl">My Rank</div></div>`;
+    const max=lb[0]?.points||1;
+    G('lb-list').innerHTML=lb.map((s,i)=>`
+      <div class="lb-item">
+        <div class="rnk ${i===0?'r1':i===1?'r2':i===2?'r3':'rn'}">${i+1}</div>
+        <div class="lb-bar-wrap">
+          <div style="display:flex;justify-content:space-between"><span style="font-size:12px;font-weight:500">${esc(s.name)}</span><span style="font-size:10px;color:var(--text3)">${s.approved}/${s.total}</span></div>
+          <div class="lb-bar"><div class="lb-bar-fill" style="width:${s.points/max*100}%"></div></div>
+        </div>
+        <div class="lb-pts">${s.points}<span style="font-size:9px;color:var(--text2)">pts</span></div>
+      </div>`).join('')||'<div class="empty"><p>No data yet.</p></div>';
+    const ctx=G('c-compare');
+    if(ctx){if(charts.cmp) charts.cmp.destroy();
+      charts.cmp=new Chart(ctx,{type:'bar',data:{labels:lb.map(s=>s.name),datasets:[{label:'Points',data:lb.map(s=>s.points),backgroundColor:'#7c6bff88',borderColor:'#7c6bff',borderWidth:1}]},options:co()});}
+  }catch(e){console.error(e);}
+}
+
+function perfTab(tab,btn){
+  document.querySelectorAll('.tabs .tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['lb','compare','analytics'].forEach(t=>G('pt-'+t)?.classList.toggle('hidden',t!==tab));
+  if(tab==='analytics') loadPerfAnalytics();
+}
+
+async function loadPerfAnalytics(){
+  try{
+    const tasks=await SB.get('tasks?select=*');
+    const cats=Object.keys(CAT_POINTS);
+    const pts={},appr={},tot={};
+    cats.forEach(c=>{pts[c]=0;appr[c]=0;tot[c]=0;});
+    (tasks||[]).forEach(t=>{if(!cats.includes(t.category)) return;tot[t.category]++;if(t.status==='Approved'){pts[t.category]+=(t.points||0);appr[t.category]++;}});
+    const colors=['#7c6bff','#22d383','#ffbe0b','#ff6b35','#4facfe'];
+    const c1=G('c-catpts'),c2=G('c-approval');
+    if(c1){if(charts.cp) charts.cp.destroy();charts.cp=new Chart(c1,{type:'bar',data:{labels:cats,datasets:[{label:'Total Points Earned',data:cats.map(c=>pts[c]),backgroundColor:colors}]},options:co()});}
+    if(c2){if(charts.ap) charts.ap.destroy();charts.ap=new Chart(c2,{type:'bar',data:{labels:cats,datasets:[{label:'Approved',data:cats.map(c=>appr[c]),backgroundColor:'#22d38388'},{label:'Total',data:cats.map(c=>tot[c]),backgroundColor:'#7c6bff44'}]},options:co()});}
+  }catch(e){console.error(e);}
+}
+
+function calcLB(tasks,users){
+  const sc={};
+  (tasks||[]).forEach(t=>{
+    if(!t.assigned_to) return;
+    if(!sc[t.assigned_to]) sc[t.assigned_to]={id:t.assigned_to,points:0,approved:0,total:0};
+    sc[t.assigned_to].total++;
+    if(t.status==='Approved'){sc[t.assigned_to].points+=(t.points||0);sc[t.assigned_to].approved++;}
+  });
+  const um={};(users||[]).forEach(u=>{um[u.user_id]=u.name||u.user_id;});
+  return Object.values(sc).map(s=>({...s,name:um[s.id]||s.id})).sort((a,b)=>b.points-a.points);
+}
+
+// ══════════════════════════════════════════════════════
+//  PROFIT
+// ══════════════════════════════════════════════════════
+async function loadProfit(){
+  try{
+    const [rev,exp,tasks,users]=await Promise.all([SB.get('revenue?select=*'),SB.get('expenses?select=*'),SB.get('tasks?select=*'),SB.get('users?select=*')]);
+    const r=sum(rev,'amount'),e=sum(exp,'amount'),profit=r-e;
+    const adminShare=profit*.4, pool=profit*.6;
+    G('profit-total').textContent='$'+fmt(profit);
+    G('profit-stats').innerHTML=`
+      <div class="stat-card"><div class="stat-icon" style="background:var(--gbg)">💵</div><div class="stat-val">$${fmt(r)}</div><div class="stat-lbl">Revenue</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--rbg)">📤</div><div class="stat-val">$${fmt(e)}</div><div class="stat-lbl">Expenses</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--glow)">👑</div><div class="stat-val">$${fmt(adminShare)}</div><div class="stat-lbl">Admin 40%</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--ybg)">👥</div><div class="stat-val">$${fmt(pool)}</div><div class="stat-lbl">Member Pool 60%</div></div>`;
+    const ctx=G('c-profitdist');
+    if(ctx){if(charts.pd) charts.pd.destroy();charts.pd=new Chart(ctx,{type:'pie',data:{labels:['Admin (40%)','Member Pool (60%)'],datasets:[{data:[40,60],backgroundColor:['#7c6bff','#22d383'],borderWidth:0}]},options:{...co(),scales:{}}});}
+    const lb=calcLB(tasks||[],users||[]);
+    const tp=lb.reduce((s,m)=>s+m.points,0);
+    G('earnings-list').innerHTML=lb.length?`<div class="tw"><table><thead><tr><th>Member</th><th>Points</th><th>Share %</th><th>Est. Earnings</th></tr></thead><tbody>${
+      lb.map(m=>{const sh=tp?(m.points/tp*100):0;return`<tr><td class="fw600">${esc(m.name)}</td><td class="text-accent">${m.points}</td><td>${sh.toFixed(1)}%</td><td class="text-green fw600">$${fmt(pool*(sh/100))}</td></tr>`;}).join('')
+    }</tbody></table></div>`:'<div class="empty"><p>No data.</p></div>';
+  }catch(e){console.error(e);}
+}
+
+// ══════════════════════════════════════════════════════
+//  REVENUE
+// ══════════════════════════════════════════════════════
+async function loadRevenue(){
+  const isAdmin=CR==='admin';
+  G('btn-add-rev').classList.toggle('hidden',!isAdmin);
+  G('rev-act-th').textContent=isAdmin?'Actions':'';
+  try{
+    const data=await SB.get('revenue?select=*&order=date.desc');
+    const total=sum(data,'amount'),thisM=sum((data||[]).filter(r=>r.date&&r.date.startsWith(new Date().toISOString().slice(0,7))),'amount');
+    G('rev-stats').innerHTML=`
+      <div class="stat-card"><div class="stat-icon" style="background:var(--gbg)">💵</div><div class="stat-val">$${fmt(total)}</div><div class="stat-lbl">Total Revenue</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--glow)">📅</div><div class="stat-val">$${fmt(thisM)}</div><div class="stat-lbl">This Month</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--ybg)">📋</div><div class="stat-val">${(data||[]).length}</div><div class="stat-lbl">Transactions</div></div>`;
+    const ctx=G('c-revtrend');
+    if(ctx){if(charts.rt) charts.rt.destroy();const months=last6();charts.rt=new Chart(ctx,{type:'bar',data:{labels:months,datasets:[{label:'Revenue',data:months.map(m=>(data||[]).filter(r=>r.date&&r.date.startsWith(m)).reduce((s,r)=>s+Number(r.amount),0)),backgroundColor:'#22d38388',borderColor:'#22d383',borderWidth:1}]},options:co()});}
+    const tb=G('rev-tb');
+    if(!data||!data.length){tb.innerHTML=`<tr><td colspan="6"><div class="empty"><p>No revenue records.</p></div></td></tr>`;return;}
+    tb.innerHTML=data.map(r=>`<tr><td>${esc(r.client_name)}</td><td>${esc(r.project_name)}</td><td class="text-green fw600">$${fmt(Number(r.amount))}</td><td style="font-size:11px">${fmtD(r.date)}</td><td style="font-size:11px;color:var(--text2)">${esc(r.notes||'—')}</td>${isAdmin?`<td><button class="btn btn-danger btn-xs" onclick="delRevenue('${r.id}')">✕</button></td>`:'<td></td>'}</tr>`).join('');
+  }catch(e){console.error(e);}
+}
+function openRevModal(){G('rv-date').value=today();openM('m-rev');}
+async function saveRevenue(){
+  const d={client_name:V('rv-client').trim(),project_name:V('rv-project').trim(),amount:parseFloat(V('rv-amount'))||0,date:V('rv-date'),notes:V('rv-notes').trim(),created_at:new Date().toISOString()};
+  if(!d.client_name||!d.amount){toast('Client and amount required','⚠','yellow');return;}
+  try{await SB.post('revenue',d);await log('Revenue Add',`$${d.amount} from ${d.client_name}`);toast('Revenue saved','✓','green');closeM('m-rev');loadRevenue();}catch(e){toast('Error','✕','red');}
+}
+async function delRevenue(id){if(!confirm('Delete?'))return;await SB.del(`revenue?id=eq.${id}`);toast('Deleted','✓','green');loadRevenue();}
+
+// ══════════════════════════════════════════════════════
+//  EXPENSES
+// ══════════════════════════════════════════════════════
+async function loadExpenses(){
+  const isAdmin=CR==='admin';
+  G('btn-add-exp').classList.toggle('hidden',!isAdmin);
+  G('exp-act-th').textContent=isAdmin?'Actions':'';
+  try{
+    const data=await SB.get('expenses?select=*&order=date.desc');
+    G('exp-stats').innerHTML=`
+      <div class="stat-card"><div class="stat-icon" style="background:var(--rbg)">📤</div><div class="stat-val">$${fmt(sum(data,'amount'))}</div><div class="stat-lbl">Total Expenses</div></div>
+      <div class="stat-card"><div class="stat-icon" style="background:var(--ybg)">📋</div><div class="stat-val">${(data||[]).length}</div><div class="stat-lbl">Records</div></div>`;
+    const cats={};(data||[]).forEach(e=>{cats[e.category]=(cats[e.category]||0)+Number(e.amount);});
+    const colors=['#7c6bff','#22d383','#ffbe0b','#ff6b35','#4facfe','#ff4d6d','#a78bfa'];
+    const ctx1=G('c-exppie');
+    if(ctx1){if(charts.ep) charts.ep.destroy();charts.ep=new Chart(ctx1,{type:'doughnut',data:{labels:Object.keys(cats),datasets:[{data:Object.values(cats),backgroundColor:colors,borderWidth:0}]},options:{...co(),cutout:'60%',scales:{}}});}
+    const ctx2=G('c-exptrend');
+    if(ctx2){if(charts.et) charts.et.destroy();const months=last6();charts.et=new Chart(ctx2,{type:'line',data:{labels:months,datasets:[{label:'Expenses',data:months.map(m=>(data||[]).filter(e=>e.date&&e.date.startsWith(m)).reduce((s,e)=>s+Number(e.amount),0)),borderColor:'#ff4d6d',backgroundColor:'#ff4d6d22',tension:.4,fill:true}]},options:co()});}
+    const tb=G('exp-tb');
+    if(!data||!data.length){tb.innerHTML=`<tr><td colspan="5"><div class="empty"><p>No expenses.</p></div></td></tr>`;return;}
+    tb.innerHTML=data.map(e=>`<tr><td><span class="badge b-submitted">${esc(e.category)}</span></td><td class="text-red fw600">$${fmt(Number(e.amount))}</td><td style="font-size:11px">${esc(e.description||'—')}</td><td style="font-size:11px">${fmtD(e.date)}</td>${isAdmin?`<td><button class="btn btn-danger btn-xs" onclick="delExpense('${e.id}')">✕</button></td>`:'<td></td>'}</tr>`).join('');
+  }catch(e){console.error(e);}
+}
+function openExpModal(){G('exp-date').value=today();openM('m-exp');}
+async function saveExpense(){
+  const d={category:V('exp-cat'),amount:parseFloat(V('exp-amount'))||0,description:V('exp-desc').trim(),date:V('exp-date'),created_at:new Date().toISOString()};
+  if(!d.amount){toast('Amount required','⚠','yellow');return;}
+  try{await SB.post('expenses',d);await log('Expense Add',`$${d.amount} (${d.category})`);toast('Expense saved','✓','green');closeM('m-exp');loadExpenses();}catch(e){toast('Error','✕','red');}
+}
+async function delExpense(id){if(!confirm('Delete?'))return;await SB.del(`expenses?id=eq.${id}`);toast('Deleted','✓','green');loadExpenses();}
+
+// ══════════════════════════════════════════════════════
+//  SHARED RECORDS
+// ══════════════════════════════════════════════════════
+async function loadRecords(){
+  try{const data=await SB.get('records?select=*&order=created_at.asc');renderRecords(data||[]);}catch(e){renderRecords([]);}
+}
+function renderRecords(rows){
+  recordRows=rows;
+  const wrap=G('records-wrap');
+  if(!rows.length){wrap.innerHTML='<div class="empty"><div class="empty-ico">📋</div><p>No records. Click "+ Row" to add.</p></div>';return;}
+  if(rows[0]&&rows[0].data){const c=Object.keys(rows[0].data);if(c.length) recordCols=c;}
+  wrap.innerHTML=`<div class="tw"><table><thead><tr><th>#</th>${recordCols.map(c=>`<th>${esc(c)}</th>`).join('')}<th>Del</th></tr></thead><tbody>
+  ${rows.map((r,i)=>`<tr><td style="color:var(--text3)">${i+1}</td>
+    ${recordCols.map(c=>`<td><input style="background:none;border:1px solid transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;padding:3px 6px;border-radius:4px;width:100%;transition:var(--tr)" value="${esc((r.data||{})[c]||'')}" onblur="saveRecordCell('${r.id}','${c}',this.value)" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='transparent';saveRecordCell('${r.id}','${c}',this.value)"></td>`).join('')}
+    <td>${(CR==='admin'||r.created_by===CU.user_id)?`<button class="btn btn-danger btn-xs" onclick="delRecord('${r.id}')">✕</button>`:''}</td>
+  </tr>`).join('')}
+  </tbody></table></div>`;
+}
+async function addRecordRow(){
+  const d={};recordCols.forEach(c=>{d[c]='';});
+  try{await SB.post('records',{data:d,created_by:CU.user_id,created_at:new Date().toISOString()});loadRecords();}catch(e){toast('Error','✕','red');}
+}
+async function addRecordCol(){
+  const name=prompt('Column name:');if(!name)return;recordCols.push(name);
+  try{for(const r of recordRows){await SB.patch(`records?id=eq.${r.id}`,{data:{...(r.data||{}),[name]:''}});}loadRecords();}catch(e){}
+}
+async function saveRecordCell(id,col,val){
+  const r=recordRows.find(x=>x.id==id);if(!r)return;
+  const nd={...(r.data||{}),[col]:val};
+  try{await SB.patch(`records?id=eq.${id}`,{data:nd});r.data=nd;}catch(e){}
+}
+async function delRecord(id){if(!confirm('Delete row?'))return;await SB.del(`records?id=eq.${id}`);loadRecords();}
+
+// ══════════════════════════════════════════════════════
+//  MESSAGES — SUPABASE REALTIME WEBSOCKET
+// ══════════════════════════════════════════════════════
+// ── last known message id for polling fallback ──
+let lastMsgTime = new Date(0).toISOString();
+let rtPollInterval = null;
+
+function connectRT(){
+  if(rtWs&&rtWs.readyState<=1) return;
+  const wsUrl=SUPABASE_URL.replace('https://','wss://').replace('http://','ws://');
+  try{
+    rtWs=new WebSocket(`${wsUrl}/realtime/v1/websocket?apikey=${SUPABASE_ANON_KEY}&vsn=1.0.0`);
+  }catch(e){ startMsgPolling(); return; }
+
+  let ref=1;
+  const send=(obj)=>{ try{ rtWs.send(JSON.stringify(obj)); }catch(e){} };
+
+  rtWs.onopen=()=>{
+    setRTStatus(true);
+    // Correct Supabase Realtime v2 channel join
+    send({
+      topic: 'realtime:messages-channel',
+      event: 'phx_join',
+      payload: {
+        config: {
+          postgres_changes: [{ event:'INSERT', schema:'public', table:'messages' }]
+        }
+      },
+      ref: String(ref++)
+    });
+    // heartbeat every 25s
+    const hb=setInterval(()=>{
+      if(rtWs&&rtWs.readyState===1){ send({topic:'phoenix',event:'heartbeat',payload:{},ref:String(ref++)}); }
+      else{ clearInterval(hb); }
+    },25000);
+  };
+
+  rtWs.onmessage=(evt)=>{
+    try{
+      const msg=JSON.parse(evt.data);
+      const myId=CU?.user_id||CU?.id;
+      // Supabase sends postgres_changes as event type "INSERT" or nested in payload
+      const isInsert =
+        (msg.event==='INSERT') ||
+        (msg.event==='postgres_changes' && msg.payload?.data?.type==='INSERT') ||
+        (msg.payload?.type==='INSERT');
+
+      let row = null;
+      if(msg.event==='INSERT' && msg.payload?.record) row=msg.payload.record;
+      else if(msg.payload?.data?.record) row=msg.payload.data.record;
+      else if(msg.payload?.record) row=msg.payload.record;
+
+      if(isInsert && row && row.sender_id){
+        // Only handle messages table rows (have sender_id/receiver_id/content)
+        if(row.content !== undefined){
+          if(chatWith&&(
+            (row.sender_id===myId&&row.receiver_id===chatWith)||
+            (row.sender_id===chatWith&&row.receiver_id===myId)
+          )){ appendMsg(row,myId); }
+          if(row.receiver_id===myId&&row.sender_id!==chatWith){
+            toast(`💬 New message from ${row.sender_id}`,'💬','green');
+            loadNotifs();
+          }
+        }
+      }
+    }catch(e){}
+  };
+
+  rtWs.onclose=()=>{
+    setRTStatus(false);
+    startMsgPolling(); // fall back to polling if WS closes
+    setTimeout(()=>{ stopMsgPolling(); connectRT(); },6000);
+  };
+  rtWs.onerror=()=>{
+    setRTStatus(false);
+    startMsgPolling();
+  };
+}
+
+// Polling fallback — checks for new messages every 2s when WS unavailable
+function startMsgPolling(){
+  if(rtPollInterval) return;
+  rtPollInterval=setInterval(async()=>{
+    if(!chatWith||!CU) return;
+    const myId=CU.user_id||CU.id;
+    try{
+      const msgs=await SB.get(`messages?or=(and(sender_id.eq.${enc(myId)},receiver_id.eq.${enc(chatWith)}),and(sender_id.eq.${enc(chatWith)},receiver_id.eq.${enc(myId)}))&created_at=gt.${enc(lastMsgTime)}&order=created_at.asc&select=*`);
+      if(msgs&&msgs.length){
+        msgs.forEach(m=>{ appendMsg(m,myId); lastMsgTime=m.created_at; });
+      }
+    }catch(e){}
+  },2000);
+}
+function stopMsgPolling(){ clearInterval(rtPollInterval); rtPollInterval=null; }
+
+function setRTStatus(on){
+  const dot=G('rt-dot'),txt=G('rt-txt');
+  if(dot) on?dot.classList.add('live'):dot.classList.remove('live');
+  if(txt) txt.textContent=on?'live':'polling';
+  const sub=G('chat-sub');
+  if(sub) sub.textContent=on?'● live':'● polling (2s)';
+}
+
+function appendMsg(row,myId){
+  const c=G('chat-msgs'); if(!c) return;
+  // deduplicate by created_at+sender
+  const key=`${row.sender_id}|${row.created_at}`;
+  if(c.querySelector(`[data-key="${CSS.escape(key)}"]`)) return;
+  const empty=c.querySelector('.empty'); if(empty) empty.remove();
+  const isOwn=row.sender_id===myId;
+  const d=document.createElement('div');
+  d.className='msg-row'+(isOwn?' own':'');
+  d.dataset.key=key;
+  d.innerHTML=`<div class="msg-av">${(row.sender_id||'U')[0].toUpperCase()}</div>
+    <div><div class="msg-bub">${esc(row.content)}</div><div class="msg-time">${fmtT(row.created_at)}</div></div>`;
+  c.appendChild(d); c.scrollTop=c.scrollHeight;
+  // update lastMsgTime
+  if(row.created_at>lastMsgTime) lastMsgTime=row.created_at;
+}
+
+async function loadMessages(){
+  connectRT();
+  try{
+    const users=await SB.get('users?select=*');
+    const myId=CU.user_id||CU.id;
+    let contacts=[];
+    if(CR==='admin') contacts=(users||[]).filter(u=>u.user_id!==myId);
+    else{
+      contacts=[{user_id:'admin',name:'Admin',role:'admin'}];
+      if(CR==='member') contacts=[...contacts,...(users||[]).filter(u=>u.role==='client')];
+    }
+    G('chat-list').innerHTML=contacts.map(u=>`
+      <div class="chat-item" id="ci-${esc(u.user_id)}" onclick="openChat('${esc(u.user_id)}','${esc(u.name||u.user_id)}',this)">
+        <div class="ci-av">${(u.name||u.user_id||'U')[0].toUpperCase()}</div>
+        <div><div class="ci-name">${esc(u.name||u.user_id)}</div><div class="ci-role">${u.role}</div></div>
+      </div>`).join('');
+  }catch(e){console.error(e);}
+}
+
+async function openChat(userId,userName,el){
+  chatWith=userId;
+  lastMsgTime=new Date(0).toISOString(); // reset so poll sees all msgs
+  document.querySelectorAll('.chat-item').forEach(i=>i.classList.remove('active'));
+  if(el) el.classList.add('active');
+  G('chat-head').innerHTML=`<div class="ci-av">${userName[0].toUpperCase()}</div><div><div style="font-size:13px;font-weight:600">${esc(userName)}</div><div style="font-size:10px;color:var(--text3)" id="chat-sub">connecting…</div></div>`;
+  G('chat-inp-wrap').classList.remove('hidden');
+  await loadChatMsgs();
+  // After loading history set lastMsgTime to now so poll only picks up NEW messages
+  lastMsgTime=new Date().toISOString();
+  // Start polling as safety net alongside WS
+  stopMsgPolling(); startMsgPolling();
+}
+
+async function loadChatMsgs(){
+  const myId=CU.user_id||CU.id;
+  if(!chatWith) return;
+  try{
+    const msgs=await SB.get(`messages?or=(and(sender_id.eq.${enc(myId)},receiver_id.eq.${enc(chatWith)}),and(sender_id.eq.${enc(chatWith)},receiver_id.eq.${enc(myId)}))&order=created_at.asc&select=*`);
+    const c=G('chat-msgs');
+    if(!msgs||!msgs.length){c.innerHTML='<div class="empty"><div class="empty-ico">💬</div><p>No messages yet. Say hello!</p></div>';return;}
+    c.innerHTML=msgs.map(m=>{
+      const isOwn=m.sender_id===myId;
+      return `<div class="msg-row${isOwn?' own':''}"><div class="msg-av">${(m.sender_id||'U')[0].toUpperCase()}</div><div><div class="msg-bub">${esc(m.content)}</div><div class="msg-time">${fmtT(m.created_at)}</div></div></div>`;
+    }).join('');
+    c.scrollTop=c.scrollHeight;
+  }catch(e){console.error(e);}
+}
+
+function chatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
+
+async function sendMsg(){
+  const inp=G('chat-inp'), content=inp.value.trim();
+  if(!content||!chatWith) return;
+  inp.value=''; inp.style.height='auto';
+  const myId=CU.user_id||CU.id;
+  const row={sender_id:myId,receiver_id:chatWith,content,created_at:new Date().toISOString()};
+  // Immediately show in UI (optimistic)
+  appendMsg(row,myId);
+  try{
+    await SB.post('messages',row);
+    await notify(chatWith,'New Message',`${myId}: ${content.substring(0,60)}`);
+  }catch(e){toast('Failed to send — check connection','✕','red');console.error(e);}
+}
+
+// ══════════════════════════════════════════════════════
+//  CALENDAR
+// ══════════════════════════════════════════════════════
+let calEvents=[];
+async function renderCalendar(){
+  G('btn-add-event').classList.toggle('hidden',CR!=='admin');
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  G('cal-label').textContent=`${months[calM]} ${calY}`;
+  try{
+    const [evts,tasks]=await Promise.all([SB.get('events?select=*'),SB.get('tasks?select=id,title,deadline&deadline=not.is.null')]);
+    calEvents=[...(evts||[]),...(tasks||[]).map(t=>({...t,type:'deadline',event_date:t.deadline,title:'⏰ '+t.title}))];
+  }catch(e){calEvents=[];}
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  G('cal-dnames').innerHTML=days.map(d=>`<div class="cal-dn">${d}</div>`).join('');
+  const first=new Date(calY,calM,1).getDay(), dim=new Date(calY,calM+1,0).getDate(), prevDim=new Date(calY,calM,0).getDate();
+  const today=new Date();
+  let cells='';
+  for(let i=0;i<first;i++) cells+=`<div class="cal-day other"><div class="cal-num">${prevDim-first+i+1}</div></div>`;
+  for(let d=1;d<=dim;d++){
+    const ds=`${calY}-${String(calM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=today.getDate()===d&&today.getMonth()===calM&&today.getFullYear()===calY;
+    const de=calEvents.filter(e=>(e.event_date||'').startsWith(ds));
+    cells+=`<div class="cal-day${isToday?' today':''}"><div class="cal-num">${d}</div><div class="cal-evts">${de.slice(0,2).map(e=>`<div class="cal-chip" title="${esc(e.title)}">${esc(e.title)}</div>`).join('')}${de.length>2?`<div class="cal-chip">+${de.length-2}</div>`:''}</div></div>`;
+  }
+  const rem=42-first-dim;
+  for(let d=1;d<=rem;d++) cells+=`<div class="cal-day other"><div class="cal-num">${d}</div></div>`;
+  G('cal-grid').innerHTML=cells;
+  const upcoming=calEvents.filter(e=>new Date(e.event_date||e.deadline)>=today).sort((a,b)=>new Date(a.event_date)-new Date(b.event_date)).slice(0,8);
+  G('cal-upcoming').innerHTML=upcoming.length?upcoming.map(e=>`<div class="audit-row"><div class="audit-ico">📅</div><div class="audit-txt"><div class="audit-act">${esc(e.title)}</div><div class="audit-meta">${fmtD(e.event_date||e.deadline)} · ${e.type||'event'}</div></div></div>`).join(''):'<div class="empty"><p>No upcoming events.</p></div>';
+}
+function calPrev(){calM--;if(calM<0){calM=11;calY--;}renderCalendar();}
+function calNext(){calM++;if(calM>11){calM=0;calY++;}renderCalendar();}
+function openEventModal(){G('ev-date').value=today();openM('m-event');}
+async function saveEvent(){
+  const d={title:V('ev-title').trim(),event_date:V('ev-date'),type:V('ev-type'),notes:V('ev-notes').trim(),created_by:CU.user_id||CU.id,created_at:new Date().toISOString()};
+  if(!d.title||!d.event_date){toast('Title and date required','⚠','yellow');return;}
+  try{await SB.post('events',d);toast('Event saved','✓','green');closeM('m-event');renderCalendar();}catch(e){toast('Error','✕','red');}
+}
+
+// ══════════════════════════════════════════════════════
+//  USERS
+// ══════════════════════════════════════════════════════
+async function loadUsers(){
+  try{
+    const users=await SB.get('users?select=*&order=created_at.desc');
+    const tb=G('users-tb');
+    if(!users||!users.length){tb.innerHTML=`<tr><td colspan="5"><div class="empty"><p>No users yet.</p></div></td></tr>`;return;}
+    tb.innerHTML=users.map(u=>`<tr><td class="fw600">${esc(u.user_id)}</td><td>${esc(u.name||'—')}</td><td><span class="badge b-${u.role}">${u.role}</span></td><td style="font-size:11px;color:var(--text2)">${fmtD(u.created_at)}</td><td><button class="btn btn-danger btn-xs" onclick="delUser('${esc(u.user_id)}')">✕</button></td></tr>`).join('');
+  }catch(e){console.error(e);}
+}
+function openUserModal(){openM('m-user');}
+async function createUser(){
+  const uid=V('nu-id').trim(),name=V('nu-name').trim(),pw=V('nu-pw'),role=V('nu-role');
+  if(!uid||!name||!pw){toast('All fields required','⚠','yellow');return;}
+  try{await SB.post('users',{user_id:uid,name,password_hash:hp(pw),role,created_at:new Date().toISOString()});
+    await log('User Create',`${uid} (${role}) created`);toast('User created','✓','green');closeM('m-user');loadUsers();}
+  catch(e){toast('Error — ID may already exist','✕','red');}
+}
+async function delUser(uid){
+  if(!confirm(`Delete user ${uid}?`)) return;
+  try{await SB.del(`users?user_id=eq.${enc(uid)}`);await log('User Delete',`${uid} deleted`);toast('Deleted','✓','green');loadUsers();}catch(e){}
+}
+
+// ══════════════════════════════════════════════════════
+//  AUDIT LOG
+// ══════════════════════════════════════════════════════
+async function loadAudit(){
+  try{
+    const logs=await SB.get('audit_logs?select=*&order=created_at.desc&limit=100');
+    const el=G('audit-list');
+    if(!logs||!logs.length){el.innerHTML='<div class="empty"><p>No audit logs.</p></div>';return;}
+    el.innerHTML=logs.map(l=>`<div class="audit-row"><div class="audit-ico">${auIco(l.action)}</div><div class="audit-txt"><div class="audit-act">${esc(l.action)}</div><div class="audit-meta">${esc(l.details||'')} · ${esc(l.user_id||'system')} · ${fmtT(l.created_at)}</div></div></div>`).join('');
+  }catch(e){console.error(e);}
+}
+async function log(action,details){
+  try{await SB.post('audit_logs',{action,details,user_id:CU?.user_id||CU?.id||'system',created_at:new Date().toISOString()});}catch(e){}
+}
+
+// ══════════════════════════════════════════════════════
+//  NOTIFICATIONS
+// ══════════════════════════════════════════════════════
+async function loadNotifs(){
+  const myId=CU.user_id||CU.id||'admin';
+  try{
+    const n=await SB.get(`notifications?or=(recipient_id.eq.${enc(myId)},recipient_id.eq.all)&order=created_at.desc&limit=30`);
+    const unread=(n||[]).filter(x=>!x.read);
+    const dot=G('ndot'); if(dot) dot.classList.toggle('hidden',!unread.length);
+    const list=G('np-list');
+    if(!n||!n.length){list.innerHTML='<div class="empty"><div class="empty-ico">🔔</div><p>No notifications.</p></div>';return;}
+    list.innerHTML=n.map(x=>`<div class="np-item${x.read?'':' unread'}" onclick="markRead('${x.id}')"><div class="np-title">${esc(x.title)}</div><div class="np-body">${esc(x.body)}</div><div class="np-time">${fmtT(x.created_at)}</div></div>`).join('');
+  }catch(e){}
+}
+async function notify(rid,title,body){
+  try{await SB.post('notifications',{recipient_id:rid,title,body,read:false,created_at:new Date().toISOString()});}catch(e){}
+}
+async function markRead(id){
+  try{await SB.patch(`notifications?id=eq.${id}`,{read:true});loadNotifs();}catch(e){}
+}
+function toggleNP(){const p=G('npanel');p.classList.toggle('open');if(p.classList.contains('open')) loadNotifs();}
+
+// ══════════════════════════════════════════════════════
+//  CLIENT PORTAL
+// ══════════════════════════════════════════════════════
+async function loadClientPortal(){
+  try{
+    const tasks=await SB.get(`tasks?client_id=eq.${enc(CU.user_id)}&select=*`);
+    const total=(tasks||[]).length, approved=(tasks||[]).filter(t=>t.status==='Approved').length;
+    G('cp-stats').innerHTML=`
+      <div class="stat-card"><div class="stat-val">${total}</div><div class="stat-lbl">Total Tasks</div></div>
+      <div class="stat-card"><div class="stat-val">${approved}</div><div class="stat-lbl">Completed</div></div>
+      <div class="stat-card"><div class="stat-val">${total?Math.round(approved/total*100):0}%</div><div class="stat-lbl">Completion</div></div>`;
+    const tb=G('cp-tb');
+    if(!tasks||!tasks.length){tb.innerHTML=`<tr><td colspan="4"><div class="empty"><p>No projects found.</p></div></td></tr>`;return;}
+    tb.innerHTML=tasks.map(t=>`<tr><td class="fw600">${esc(t.title)}</td><td><span class="badge b-submitted">${esc(t.category)}</span></td><td style="font-size:11px">${t.deadline?fmtD(t.deadline):'—'}</td><td><span class="badge b-${stCls(t.status)}">${esc(t.status)}</span></td></tr>`).join('');
+  }catch(e){console.error(e);}
+}
+
+// ══════════════════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════════════════
+async function changePW(){
+  const old=V('pw-old'),nw=V('pw-new'),cf=V('pw-confirm');
+  const msg=G('pw-msg');
+  if(!old||!nw||!cf){msg.textContent='All fields required.';msg.style.color='var(--red)';return;}
+  if(nw!==cf){msg.textContent='Passwords do not match.';msg.style.color='var(--red)';return;}
+  if(nw.length<6){msg.textContent='Min 6 characters.';msg.style.color='var(--red)';return;}
+  const myId=CU.user_id;
+  if(!myId){msg.textContent='Admin password is hardcoded in the HTML file.';msg.style.color='var(--yellow)';return;}
+  try{
+    const users=await SB.get(`users?user_id=eq.${enc(myId)}&select=password_hash`);
+    if(!users||!users[0]||users[0].password_hash!==hp(old)){msg.textContent='Current password incorrect.';msg.style.color='var(--red)';return;}
+    await SB.patch(`users?user_id=eq.${enc(myId)}`,{password_hash:hp(nw)});
+    msg.textContent='Password updated!';msg.style.color='var(--green)';
+    G('pw-old').value='';G('pw-new').value='';G('pw-confirm').value='';
+  }catch(e){msg.textContent='Error updating password.';msg.style.color='var(--red)';}
+}
+
+// ══════════════════════════════════════════════════════
+//  REALTIME INIT
+// ══════════════════════════════════════════════════════
+function startRT(){
+  const ni=setInterval(loadNotifs,10000);
+  rtInts.push(ni);
+  connectRT();
+}
+
+// ══════════════════════════════════════════════════════
+//  UI HELPERS
+// ══════════════════════════════════════════════════════
+function openM(id){G(id).classList.add('open');}
+function closeM(id){G(id).classList.remove('open');}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',function(e){if(e.target===this) this.classList.remove('open');}));
+function toggleSB(){G('sidebar').classList.toggle('open');G('sb-overlay').classList.toggle('open');}
+function closeSB(){G('sidebar').classList.remove('open');G('sb-overlay').classList.remove('open');}
+
+function toast(msg,icon,type){
+  const cols={green:'var(--green)',red:'var(--red)',yellow:'var(--yellow)'};
+  const el=document.createElement('div'); el.className='toast';
+  el.innerHTML=`<span style="font-size:14px;color:${cols[type]||'var(--accent)'}">${icon}</span><span>${msg}</span>`;
+  G('toasts').appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateX(14px)';el.style.transition='.25s';setTimeout(()=>el.remove(),260);},3000);
+}
+
+// ══════════════════════════════════════════════════════
+//  CHART DEFAULTS
+// ══════════════════════════════════════════════════════
+function co(){return{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#9898b0',font:{family:'DM Sans',size:11},boxWidth:10}},tooltip:{backgroundColor:'#13131a',borderColor:'#ffffff18',borderWidth:1,titleColor:'#f0f0f5',bodyColor:'#9898b0',titleFont:{family:'Syne',size:12},bodyFont:{family:'DM Sans',size:11}}},scales:{x:{grid:{color:'#ffffff07'},ticks:{color:'#5a5a72',font:{family:'DM Sans',size:10}}},y:{grid:{color:'#ffffff07'},ticks:{color:'#5a5a72',font:{family:'DM Sans',size:10}}}}};}
+
+// ══════════════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════════════
+const G=id=>document.getElementById(id);
+const V=id=>document.getElementById(id)?.value||'';
+const enc=s=>encodeURIComponent(s);
+const esc=s=>s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmt=n=>Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtD=d=>{if(!d)return'—';return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});};
+const fmtT=d=>{if(!d)return'—';return new Date(d).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});};
+const today=()=>new Date().toISOString().split('T')[0];
+const sum=(arr,k)=>(arr||[]).reduce((s,r)=>s+Number(r[k]||0),0);
+function last6(){const months=[],now=new Date();for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`);}return months;}
+function stCls(s){return{Pending:'pending',Submitted:'submitted','Under Review':'review',Approved:'approved',Rejected:'rejected'}[s]||'pending';}
+function stIco(s){return{Pending:'⏳',Submitted:'📤','Under Review':'🔍',Approved:'✓',Rejected:'✕'}[s]||'•';}
+function auIco(a){if(a?.includes('Login'))return'🔑';if(a?.includes('Task'))return'✓';if(a?.includes('Revenue'))return'💰';if(a?.includes('User'))return'👤';return'📝';}
+
+// Enter key for login
+G('l-pw').addEventListener('keydown',e=>{if(e.key==='Enter') doLogin();});
+G('l-id').addEventListener('keydown',e=>{if(e.key==='Enter') G('l-pw').focus();});
+</script>
+</body>
+</html>
